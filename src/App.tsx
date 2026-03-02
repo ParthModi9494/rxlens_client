@@ -53,7 +53,7 @@ const App = () => {
           ℞
         </div>
         <span className="text-[15px] font-black text-slate-800 tracking-tight">
-          RxInsight
+          RxLens
         </span>
         {screen === "dashboard" && (
           <div className="ml-auto flex items-center gap-1.5 text-[11px] font-bold text-green-600">
