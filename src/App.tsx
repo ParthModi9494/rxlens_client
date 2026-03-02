@@ -16,7 +16,7 @@ const App = () => {
       formData.append("file", blob, "prescription.jpg");
 
       // Send to API
-      const apiUrl = import.meta.env.API_ENDPOINT_URL;
+      const apiUrl = import.meta.env.VITE_API_ENDPOINT_URL;
       const res = await fetch(`${apiUrl}/api/v1/parse-prescription`, {
         method: "POST",
         body: formData,
