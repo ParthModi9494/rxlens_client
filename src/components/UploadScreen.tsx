@@ -109,10 +109,17 @@ const UploadScreen = ({ onUpload }: UploadScreenProps) => {
               console.error("Error loading sample image:", error);
             }
           }}
-          className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 font-bold text-[13px] px-5 py-2.5 rounded-2xl border-none cursor-pointer hover:bg-blue-100 transition-colors"
+          className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 font-bold text-[13px] px-5 py-2.5 rounded-2xl border-none cursor-pointer hover:bg-blue-100 transition-colors mb-4"
         >
           <FileIcon /> Try with sample prescription <ChevronIcon />
         </button>
+        <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)]">
+          <img 
+            src={sampleImage} 
+            alt="Sample prescription" 
+            className="w-full max-w-sm mx-auto block"
+          />
+        </div>
       </div>
     </div>
   );
