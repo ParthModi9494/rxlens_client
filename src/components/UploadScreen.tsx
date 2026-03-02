@@ -72,7 +72,7 @@ const UploadScreen = ({ onUpload }: UploadScreenProps) => {
           </div>
 
           <div className="flex items-center gap-2">
-            {["JPG", "PNG", "PDF", "HEIC"].map((f, i) => (
+            {["JPG", "PNG", "WEBP", "HEIC"].map((f, i) => (
               <span
                 key={f}
                 className={`text-[11px] font-bold ${i % 2 === 0 ? "text-blue-500" : "text-slate-400"}`}
