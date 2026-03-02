@@ -162,7 +162,11 @@ interface SectionHeaderProps {
   iconBg?: string;
 }
 
-const SectionHeader = ({ icon, title, iconBg = "bg-slate-50" }: SectionHeaderProps) => (
+const SectionHeader = ({
+  icon,
+  title,
+  iconBg = "bg-slate-50",
+}: SectionHeaderProps) => (
   <div className="flex items-center gap-2.5 mb-3 mt-6">
     <div
       className={`w-[30px] h-[30px] ${iconBg} rounded-[10px] flex items-center justify-center`}
