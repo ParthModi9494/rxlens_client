@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import sampleImage from "../assets/Sample.jpeg";
 import { ChevronIcon, FileIcon, SparkleIcon, UploadIcon } from "./Icons";
 
 interface UploadScreenProps {
@@ -99,12 +100,14 @@ const UploadScreen = ({ onUpload }: UploadScreenProps) => {
       <div className="text-center mt-5">
         <button
           onClick={async () => {
-            // Create a sample prescription blob for demo
-            const sampleBlobString =
-              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
-            const response = await fetch(sampleBlobString);
-            const blob = await response.blob();
-            onUpload(blob);
+            try {
+              // Fetch the sample image from assets and convert to blob
+              const response = await fetch(sampleImage);
+              const blob = await response.blob();
+              onUpload(blob);
+            } catch (error) {
+              console.error("Error loading sample image:", error);
+            }
           }}
           className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 font-bold text-[13px] px-5 py-2.5 rounded-2xl border-none cursor-pointer hover:bg-blue-100 transition-colors"
         >
