@@ -1,8 +1,12 @@
 import { useRef } from "react";
 import { ChevronIcon, FileIcon, SparkleIcon, UploadIcon } from "./Icons";
 
-const UploadScreen = ({ onUpload }) => {
-  const inputRef = useRef(null);
+interface UploadScreenProps {
+  onUpload: (blob: Blob) => void;
+}
+
+const UploadScreen = ({ onUpload }: UploadScreenProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = (file: File) => {
     onUpload(file);

@@ -117,7 +117,7 @@ export const SAMPLE_DATA = {
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────
-const fmtDate = (iso) => {
+const fmtDate = (iso: string) => {
   if (!iso) return null;
   return new Date(iso).toLocaleDateString("en-IN", {
     day: "numeric",
@@ -126,7 +126,7 @@ const fmtDate = (iso) => {
   });
 };
 
-const freqStyle = (freq) => {
+const freqStyle = (freq: string) => {
   const f = (freq || "").toLowerCase();
   if (f.includes("three") || f.includes("3"))
     return {
@@ -141,7 +141,7 @@ const freqStyle = (freq) => {
   return { bg: "bg-purple-50", text: "text-purple-700", dot: "bg-purple-400" };
 };
 
-const buildSummary = (data) =>
+const buildSummary = (data: any) =>
   `
 PRESCRIPTION: ${data.prescription_id}  |  Date: ${fmtDate(data.date_issued)}
 Patient: ${data.patient.name}, ${data.patient.age} yrs, ${data.patient.gender}
@@ -149,14 +149,20 @@ Doctor:  ${data.doctor.name}  |  Lic: ${data.doctor.license_number}
 Vitals:  BP ${data.vitals_at_visit.BP}  |  FBS ${data.vitals_at_visit.FBS} mg/dL  |  PPBS ${data.vitals_at_visit.PPBS} mg/dL
 
 MEDICATIONS:
-${data.medications.map((m, i) => `${i + 1}. ${m.name}${m.strength ? ` ${m.strength}` : ""} — ${m.frequency} (${m.duration})`).join("\n")}
+${data.medications.map((m: any, i: number) => `${i + 1}. ${m.name}${m.strength ? ` ${m.strength}` : ""} — ${m.frequency} (${m.duration})`).join("\n")}
 
 Notes: ${data.clinical_notes}
 Follow-up: ${data.follow_up_date}
 `.trim();
 
 // ─── Section Header ───────────────────────────────────────────────
-const SectionHeader = ({ icon, title, iconBg = "bg-slate-50" }) => (
+interface SectionHeaderProps {
+  icon: React.ReactNode;
+  title: string;
+  iconBg?: string;
+}
+
+const SectionHeader = ({ icon, title, iconBg = "bg-slate-50" }: SectionHeaderProps) => (
   <div className="flex items-center gap-2.5 mb-3 mt-6">
     <div
       className={`w-[30px] h-[30px] ${iconBg} rounded-[10px] flex items-center justify-center`}
@@ -170,7 +176,12 @@ const SectionHeader = ({ icon, title, iconBg = "bg-slate-50" }) => (
 );
 
 // ─── Dashboard ────────────────────────────────────────────────────
-const Dashboard = ({ data, onReset }) => {
+interface DashboardProps {
+  data: any;
+  onReset: () => void;
+}
+
+const Dashboard = ({ data, onReset }: DashboardProps) => {
   const [copied, setCopied] = useState(false);
   const {
     patient,
@@ -356,7 +367,7 @@ const Dashboard = ({ data, onReset }) => {
         title={`Medications · ${medications.length}`}
       />
       <div className="flex flex-col gap-3">
-        {medications.map((med, i) => {
+        {medications.map((med: any, i: number) => {
           const fs = freqStyle(med.frequency);
           const isTopical = (med.route || "").toLowerCase() === "topical";
           const validStrength =
