@@ -486,7 +486,15 @@ const Dashboard = ({ data, onReset }) => {
               ⚠️ Important Disclaimer
             </p>
             <p className="text-[12px] font-medium text-red-800 leading-relaxed">
-              This prescription information has been transcribed from an image using AI technology. While we strive for accuracy, transcription errors can occur. <span className="font-bold">Do not rely solely on this information for medical decisions.</span> Always consult with your doctor or pharmacist to verify the prescription details and get professional guidance before taking any medication.
+              This prescription information has been transcribed from an image
+              using AI technology. While we strive for accuracy, transcription
+              errors can occur.{" "}
+              <span className="font-bold">
+                Do not rely solely on this information for medical decisions.
+              </span>{" "}
+              Always consult with your doctor or pharmacist to verify the
+              prescription details and get professional guidance before taking
+              any medication.
             </p>
           </div>
         </div>
