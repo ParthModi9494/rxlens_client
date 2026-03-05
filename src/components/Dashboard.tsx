@@ -4,7 +4,6 @@ import {
   AlertIcon,
   CalendarIcon,
   CheckIcon,
-  ClipboardIcon,
   ClockIcon,
   CopyIcon,
   DropletsIcon,
@@ -18,102 +17,158 @@ import {
 
 // ─── Sample Data ─────────────────────────────────────────────────
 export const SAMPLE_DATA = {
-  prescription_id: "RX-2024-07-02-001",
-  date_issued: "2024-07-02T00:00:00Z",
-  patient: { name: "Rina Paul", age: 44, gender: "Female", blood_group: null },
+  prescription_id: "RX-2022-1012-001",
+  date_issued: "2022-10-12T00:00:00Z",
+  patient: {
+    name: "Sachin Sansare",
+    date_of_birth: "1994-01-01",
+    age: 28,
+    gender: "Male",
+    blood_group: null,
+    contact_number: null,
+    emergency_contact: null,
+    known_allergies: [],
+    chronic_conditions: [],
+  },
   doctor: {
-    name: "Dr Mounita Debnath",
-    license_number: "76565",
-    qualifications: "M.B.B.S.(WBUHS), M.D. Respiratory Medicine (PGT)",
-    clinic_name: "City Medical Centre",
+    id: null,
+    name: "Dr. Amita",
+    specialization: "General Dentistry",
+    license_number: null,
+    qualifications: null,
+    clinic_name: "THE White TUSK",
+    clinic_address:
+      "Not specified, contact: +91 8108112511, info@thewhitetusk.com",
+    contact_number: "+91 8108112511",
   },
   medications: [
     {
-      name: "Numlo-TM",
-      strength: "5mg",
+      name: "Augmentin",
+      strength: "625mg",
       dosage: "1 tablet",
-      frequency: "Once daily after breakfast",
-      route: "Oral",
-      duration: "Continuous",
-    },
-    {
-      name: "Vylda-DM",
-      strength: "100/10/1000",
-      dosage: "1 tablet",
-      frequency: "Once daily before lunch",
-      route: "Oral",
-      duration: "Continuous",
-    },
-    {
-      name: "Melmet SR",
-      strength: "500mg",
-      dosage: "1 tablet",
-      frequency: "Once daily before dinner",
-      route: "Oral",
-      duration: "Continuous",
-    },
-    {
-      name: "Ecaspirin-AV",
-      strength: "75mg/10mg",
-      dosage: "1 tablet",
-      frequency: "Once daily after dinner",
-      route: "Oral",
-      duration: "Continuous",
-    },
-    {
-      name: "Rabinos-D",
-      strength: null,
-      dosage: "1 capsule",
-      frequency: "Once daily before food",
-      route: "Oral",
-      duration: "1 month",
-    },
-    {
-      name: "Vibrante",
-      strength: null,
-      dosage: "1 tablet",
-      frequency: "Once daily after food",
-      route: "Oral",
-      duration: "1 month",
-    },
-    {
-      name: "Zerodol-P",
-      strength: null,
-      dosage: "1 tablet",
-      frequency: "Twice daily after food",
+      frequency: "Twice a day (morning and night)",
       route: "Oral",
       duration: "5 days",
+      instructions: "Take after meals",
+      side_effects: [
+        "Nausea",
+        "Vomiting",
+        "Diarrhea",
+        "Abdominal pain",
+        "Skin rash",
+        "Candidiasis",
+      ],
+      contraindications: [
+        "Hypersensitivity to penicillin or clavulanic acid",
+        "History of cholestatic jaundice/hepatic dysfunction associated with amoxicillin-clavulanate",
+      ],
+      precautions:
+        "Use with caution in patients with renal or hepatic impairment. Inform your doctor if you have mononucleosis. Consult doctor if pregnant or breastfeeding.",
+      alternatives: [
+        { name: "Moxikind-CV 625mg", type: "alternative" },
+        { name: "Clavam 625mg", type: "alternative" },
+        { name: "Amoxyclav 625mg", type: "alternative" },
+        { name: "Amoxicillin + Clavulanic Acid 625mg", type: "generic" },
+      ],
     },
     {
-      name: "Candid-V Ointment",
-      strength: null,
-      dosage: "Apply locally",
-      frequency: "As directed",
-      route: "Topical",
-      duration: "As directed",
-    },
-    {
-      name: "Alkasol Syrup",
-      strength: null,
-      dosage: "2 tsp in water",
-      frequency: "Three times a day",
-      route: "Oral",
-      duration: "7 days",
-    },
-    {
-      name: "Lfx",
-      strength: "750mg",
+      name: "Enzoflam",
+      strength:
+        "Diclofenac Potassium 50mg + Paracetamol 325mg + Serratiopeptidase 15mg",
       dosage: "1 tablet",
-      frequency: "Once daily after food",
+      frequency: "Twice a day (morning and night)",
       route: "Oral",
-      duration: "7 days",
+      duration: "5 days",
+      instructions: "Take after meals",
+      side_effects: [
+        "Nausea",
+        "Vomiting",
+        "Stomach pain",
+        "Indigestion",
+        "Heartburn",
+        "Diarrhea",
+        "Dizziness",
+        "Drowsiness",
+      ],
+      contraindications: [
+        "Hypersensitivity to NSAIDs, aspirin, or paracetamol",
+        "Active peptic ulcer",
+        "Severe renal or hepatic impairment",
+        "Severe heart failure",
+        "Third trimester of pregnancy",
+      ],
+      precautions:
+        "Use with caution in patients with asthma, bleeding disorders, cardiovascular disease, or hypertension. Avoid alcohol consumption. Consult doctor if pregnant or breastfeeding.",
+      alternatives: [
+        { name: "Serata-D Tablet", type: "alternative" },
+        { name: "Enzoflam-D Tablet", type: "alternative" },
+        {
+          name: "Diclofenac Potassium + Paracetamol + Serratiopeptidase",
+          type: "generic",
+        },
+      ],
+    },
+    {
+      name: "Pan D",
+      strength: "Pantoprazole 40mg + Domperidone 10mg",
+      dosage: "1 tablet",
+      frequency: "Once a day (morning)",
+      route: "Oral",
+      duration: "5 days",
+      instructions: "Take before meals",
+      side_effects: [
+        "Headache",
+        "Nausea",
+        "Diarrhea",
+        "Abdominal pain",
+        "Flatulence",
+        "Dry mouth",
+        "Dizziness",
+      ],
+      contraindications: [
+        "Hypersensitivity to pantoprazole or domperidone",
+        "Moderate to severe hepatic impairment",
+        "Conditions where gastric motility stimulation is harmful (e.g., GI hemorrhage, mechanical obstruction, perforation)",
+        "Prolactin-releasing pituitary tumor",
+        "Cardiac conduction abnormalities (QT prolongation)",
+      ],
+      precautions:
+        "Long-term use may increase the risk of osteoporosis and C. difficile infection. Use with caution in patients with severe renal impairment. Consult doctor if pregnant or breastfeeding.",
+      alternatives: [
+        { name: "Pantocid-D", type: "alternative" },
+        { name: "Pentaloc-D", type: "alternative" },
+        { name: "Nupenta-D", type: "alternative" },
+        { name: "Pantoprazole + Domperidone", type: "generic" },
+      ],
+    },
+    {
+      name: "Hexigel gum paint",
+      strength: "0.2% Chlorhexidine Gluconate",
+      dosage: "Apply a small amount and massage",
+      frequency: "Twice a day (morning and night)",
+      route: "Topical (oral)",
+      duration: "1 week",
+      instructions: "Massage onto gums. Do not swallow.",
+      side_effects: [
+        "Temporary staining of teeth and tongue",
+        "Altered taste sensation",
+        "Burning sensation",
+      ],
+      contraindications: ["Hypersensitivity to chlorhexidine"],
+      precautions:
+        "For oral use only. Do not swallow. Avoid contact with eyes and ears. Keep out of reach of children.",
+      alternatives: [
+        { name: "Rexidin M Forte Gel", type: "alternative" },
+        { name: "Perio-Aid Gel", type: "alternative" },
+        { name: "Chlorhexidine Gluconate Gel/Mouthwash", type: "generic" },
+      ],
     },
   ],
-  chief_complaint: "Burning micturition",
-  vitals_at_visit: { BP: "120/70", FBS: "203", PPBS: "293" },
-  clinical_notes:
-    "Signs of hypoglycaemia — explain to patient. Blood tests (FBS, PPBS, HbA1C) after 3 months.",
-  follow_up_date: "2024-10-02",
+  chief_complaint: null,
+  diagnosis: [],
+  vitals_at_visit: null,
+  clinical_notes: null,
+  follow_up_date: null,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────
@@ -141,19 +196,47 @@ const freqStyle = (freq: string) => {
   return { bg: "bg-purple-50", text: "text-purple-700", dot: "bg-purple-400" };
 };
 
-const buildSummary = (data: any) =>
-  `
+const buildSummary = (data: any) => {
+  const vitalsStr = data.vitals_at_visit
+    ? `Vitals:  BP ${data.vitals_at_visit.BP}  |  FBS ${data.vitals_at_visit.FBS} mg/dL  |  PPBS ${data.vitals_at_visit.PPBS} mg/dL\n\n`
+    : "";
+  const notesStr = data.clinical_notes ? `Notes: ${data.clinical_notes}\n` : "";
+  const followStr = data.follow_up_date
+    ? `Follow-up: ${data.follow_up_date}\n`
+    : "";
+
+  return `
 PRESCRIPTION: ${data.prescription_id}  |  Date: ${fmtDate(data.date_issued)}
 Patient: ${data.patient.name}, ${data.patient.age} yrs, ${data.patient.gender}
-Doctor:  ${data.doctor.name}  |  Lic: ${data.doctor.license_number}
-Vitals:  BP ${data.vitals_at_visit.BP}  |  FBS ${data.vitals_at_visit.FBS} mg/dL  |  PPBS ${data.vitals_at_visit.PPBS} mg/dL
+Doctor:  ${data.doctor.name}${data.doctor.specialization ? ` (${data.doctor.specialization})` : ""}
 
-MEDICATIONS:
-${data.medications.map((m: any, i: number) => `${i + 1}. ${m.name}${m.strength ? ` ${m.strength}` : ""} — ${m.frequency} (${m.duration})`).join("\n")}
+${vitalsStr}MEDICATIONS:
+${data.medications
+  .map((m: any, i: number) => {
+    let details = `${i + 1}. ${m.name}${m.strength ? ` ${m.strength}` : ""} — ${m.frequency} (${m.duration})`;
+    if (m.instructions) details += `\n   Instructions: ${m.instructions}`;
+    if (m.side_effects && m.side_effects.length > 0) {
+      details += `\n   Side Effects: ${m.side_effects.join(", ")}`;
+    }
+    if (m.contraindications && m.contraindications.length > 0) {
+      details += `\n   Contraindications: ${m.contraindications.join(", ")}`;
+    }
+    if (m.precautions) {
+      details += `\n   Precautions: ${m.precautions}`;
+    }
+    if (m.alternatives && m.alternatives.length > 0) {
+      const altNames = m.alternatives
+        .map((alt: any) => (typeof alt === "string" ? alt : alt.name))
+        .join(", ");
+      details += `\n   Alternatives: ${altNames}`;
+    }
+    return details;
+  })
+  .join("\n")}
 
-Notes: ${data.clinical_notes}
-Follow-up: ${data.follow_up_date}
+${notesStr}${followStr}
 `.trim();
+};
 
 // ─── Section Header ───────────────────────────────────────────────
 interface SectionHeaderProps {
@@ -187,6 +270,10 @@ interface DashboardProps {
 
 const Dashboard = ({ data, onReset }: DashboardProps) => {
   const [copied, setCopied] = useState(false);
+  const [expandedMeds, setExpandedMeds] = useState<Set<number>>(new Set());
+  const [expandedDetails, setExpandedDetails] = useState<Set<number>>(
+    new Set(),
+  );
   const {
     patient,
     doctor,
@@ -199,6 +286,26 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
     date_issued,
   } = data;
 
+  const toggleAlternatives = (index: number) => {
+    const newSet = new Set(expandedMeds);
+    if (newSet.has(index)) {
+      newSet.delete(index);
+    } else {
+      newSet.add(index);
+    }
+    setExpandedMeds(newSet);
+  };
+
+  const toggleDetails = (index: number) => {
+    const newSet = new Set(expandedDetails);
+    if (newSet.has(index)) {
+      newSet.delete(index);
+    } else {
+      newSet.add(index);
+    }
+    setExpandedDetails(newSet);
+  };
+
   const handleCopy = () => {
     navigator.clipboard?.writeText(buildSummary(data)).catch(() => {});
     setCopied(true);
@@ -208,7 +315,7 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
   const followDate = follow_up_date ? new Date(follow_up_date) : null;
 
   return (
-    <div className="max-w-180 mx-auto px-4 pb-16">
+    <div className="px-4 pb-16 mx-auto max-w-180">
       {/* ── Hero Patient Card ───────────────────────────────── */}
       <div
         className="rounded-[28px] overflow-hidden px-5 pt-7 pb-6 relative mt-4 animate-fade-up"
@@ -276,8 +383,8 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
         iconBg="bg-green-50"
       />
       <div className="bg-white rounded-[22px] p-5 shadow-[0_2px_18px_rgba(0,0,0,0.06)] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-green-50 rounded-full translate-x-1/3 -translate-y-1/3 opacity-70" />
-        <div className="flex gap-4 items-start relative z-10">
+        <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-green-50 translate-x-1/3 -translate-y-1/3 opacity-70" />
+        <div className="relative z-10 flex items-start gap-4">
           <div
             className="w-13 h-13 rounded-[18px] flex items-center justify-center shrink-0"
             style={{
@@ -287,83 +394,100 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
           >
             <ScopeIcon />
           </div>
-          <div>
+          <div className="flex-1">
             <p className="text-[16px] font-extrabold text-slate-900 leading-tight">
               {doctor.name}
             </p>
-            <p className="text-[12px] text-slate-500 mt-0.5 leading-relaxed">
-              {doctor.qualifications}
-            </p>
+            {doctor.specialization && (
+              <p className="text-[12px] text-slate-500 mt-0.5 font-semibold">
+                {doctor.specialization}
+              </p>
+            )}
+            {doctor.qualifications && (
+              <p className="text-[12px] text-slate-500 mt-0.5 leading-relaxed">
+                {doctor.qualifications}
+              </p>
+            )}
             <div className="flex flex-wrap gap-2 mt-3">
-              <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-green-50 text-green-700 px-2.5 py-1 rounded-full">
-                <ClipboardIcon /> Lic. #{doctor.license_number}
-              </span>
-              {doctor.clinic_name &&
-                doctor.clinic_name !== "Unknown Clinic" && (
-                  <span className="text-[11px] font-bold bg-slate-50 text-slate-500 px-2.5 py-1 rounded-full">
-                    {doctor.clinic_name}
-                  </span>
-                )}
+              {doctor.clinic_name && (
+                <span className="text-[11px] font-bold bg-green-50 text-green-700 px-2.5 py-1 rounded-full">
+                  {doctor.clinic_name}
+                </span>
+              )}
+              {doctor.contact_number && (
+                <span className="text-[11px] font-bold bg-slate-50 text-slate-500 px-2.5 py-1 rounded-full">
+                  {doctor.contact_number}
+                </span>
+              )}
             </div>
+            {doctor.clinic_address && (
+              <p className="text-[11px] text-slate-600 mt-2 leading-relaxed">
+                {doctor.clinic_address}
+              </p>
+            )}
           </div>
         </div>
       </div>
 
       {/* ── Vitals ─────────────────────────────────────────── */}
-      <SectionHeader icon={<ActivityIcon />} title="Vitals at Visit" />
-      <div className="grid grid-cols-3 gap-3">
-        {[
-          {
-            icon: <HeartIcon />,
-            label: "Blood Pressure",
-            value: vitals?.BP,
-            unit: "mmHg",
-            blob: "bg-red-500",
-            iconBg: "bg-red-50",
-          },
-          {
-            icon: <DropletsIcon />,
-            label: "FBS",
-            value: vitals?.FBS,
-            unit: "mg/dL",
-            blob: "bg-orange-500",
-            iconBg: "bg-orange-50",
-          },
-          {
-            icon: <FlaskIcon />,
-            label: "PPBS",
-            value: vitals?.PPBS,
-            unit: "mg/dL",
-            blob: "bg-violet-500",
-            iconBg: "bg-violet-50",
-          },
-        ].map(({ icon, label, value, unit, blob, iconBg }) => (
-          <div
-            key={label}
-            className="bg-white rounded-[20px] p-4 relative overflow-hidden shadow-[0_2px_18px_rgba(0,0,0,0.06)]"
-          >
-            <div
-              className={`absolute top-0 right-0 w-16 h-16 ${blob} opacity-[0.08] rounded-full translate-x-1/3 -translate-y-1/3`}
-            />
-            <div
-              className={`w-8 h-8 ${iconBg} rounded-xl flex items-center justify-center mb-2.5`}
-            >
-              {icon}
-            </div>
-            <p className="text-[18px] font-black text-slate-900 leading-none">
-              {value ?? "—"}
-              {value && (
-                <span className="text-[10px] font-bold text-slate-400 ml-0.5">
-                  {unit}
-                </span>
-              )}
-            </p>
-            <p className="text-[10px] font-extrabold text-slate-400 tracking-[0.1em] uppercase mt-1.5">
-              {label}
-            </p>
+      {vitals && (
+        <>
+          <SectionHeader icon={<ActivityIcon />} title="Vitals at Visit" />
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              {
+                icon: <HeartIcon />,
+                label: "Blood Pressure",
+                value: vitals?.BP,
+                unit: "mmHg",
+                blob: "bg-red-500",
+                iconBg: "bg-red-50",
+              },
+              {
+                icon: <DropletsIcon />,
+                label: "FBS",
+                value: vitals?.FBS,
+                unit: "mg/dL",
+                blob: "bg-orange-500",
+                iconBg: "bg-orange-50",
+              },
+              {
+                icon: <FlaskIcon />,
+                label: "PPBS",
+                value: vitals?.PPBS,
+                unit: "mg/dL",
+                blob: "bg-violet-500",
+                iconBg: "bg-violet-50",
+              },
+            ].map(({ icon, label, value, unit, blob, iconBg }) => (
+              <div
+                key={label}
+                className="bg-white rounded-[20px] p-4 relative overflow-hidden shadow-[0_2px_18px_rgba(0,0,0,0.06)]"
+              >
+                <div
+                  className={`absolute top-0 right-0 w-16 h-16 ${blob} opacity-[0.08] rounded-full translate-x-1/3 -translate-y-1/3`}
+                />
+                <div
+                  className={`w-8 h-8 ${iconBg} rounded-xl flex items-center justify-center mb-2.5`}
+                >
+                  {icon}
+                </div>
+                <p className="text-[18px] font-black text-slate-900 leading-none">
+                  {value ?? "—"}
+                  {value && (
+                    <span className="text-[10px] font-bold text-slate-400 ml-0.5">
+                      {unit}
+                    </span>
+                  )}
+                </p>
+                <p className="text-[10px] font-extrabold text-slate-400 tracking-[0.1em] uppercase mt-1.5">
+                  {label}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
 
       {/* ── Medications ─────────────────────────────────────── */}
       <SectionHeader
@@ -376,6 +500,17 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
           const isTopical = (med.route || "").toLowerCase() === "topical";
           const validStrength =
             med.strength && med.strength !== "Not specified";
+          const hasAlternatives =
+            med.alternatives && med.alternatives.length > 0;
+          const hasSideEffects =
+            med.side_effects && med.side_effects.length > 0;
+          const hasContraindications =
+            med.contraindications && med.contraindications.length > 0;
+          const hasPrecautions = med.precautions && med.precautions.length > 0;
+          const hasDetails =
+            hasSideEffects || hasContraindications || hasPrecautions;
+          const isExpanded = expandedMeds.has(i);
+          const detailsExpanded = expandedDetails.has(i);
           return (
             <div
               key={i}
@@ -388,8 +523,8 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
               />
 
               <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[15px] font-extrabold text-slate-900 leading-tight">
                       {med.name}
                     </span>
@@ -402,6 +537,11 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
                   <p className="text-[12px] text-slate-500 mt-1">
                     {med.dosage}
                   </p>
+                  {med.instructions && (
+                    <p className="text-[11px] text-slate-600 mt-1.5 italic">
+                      💡 {med.instructions}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-400 shrink-0 mt-0.5">
                   <ClockIcon />
@@ -409,7 +549,7 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
                 </div>
               </div>
 
-              <div className="flex items-center flex-wrap gap-2 mt-3">
+              <div className="flex flex-wrap items-center gap-2 mt-3">
                 {/* Frequency badge */}
                 <span
                   className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full ${fs.bg} ${fs.text}`}
@@ -428,7 +568,121 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
                   {isTopical ? <LayersIcon /> : <PillIcon />}
                   {med.route}
                 </span>
+                {/* Details toggle */}
+                {hasDetails && (
+                  <button
+                    onClick={() => toggleDetails(i)}
+                    className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                      detailsExpanded
+                        ? "bg-red-50 text-red-700"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    <AlertIcon />
+                    {detailsExpanded ? "Hide details" : "Details"}
+                  </button>
+                )}
+                {/* Alternatives toggle */}
+                {hasAlternatives && (
+                  <button
+                    onClick={() => toggleAlternatives(i)}
+                    className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                      isExpanded
+                        ? "bg-purple-50 text-purple-700"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    <FlaskIcon />
+                    {isExpanded ? "Hide alternatives" : "Alternatives"}
+                  </button>
+                )}
               </div>
+
+              {/* Details section */}
+              {hasDetails && detailsExpanded && (
+                <div className="mt-3.5 pt-3.5 border-t border-slate-100 space-y-3.5">
+                  {hasSideEffects && (
+                    <div>
+                      <p className="text-[10px] font-extrabold text-slate-400 tracking-[0.1em] uppercase mb-2">
+                        Side Effects
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {med.side_effects.map((effect: string, idx: number) => (
+                          <span
+                            key={idx}
+                            className="text-[11px] font-medium px-2.5 py-1.5 rounded-[10px] bg-red-50 text-red-700 border border-red-200"
+                          >
+                            • {effect}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {hasContraindications && (
+                    <div>
+                      <p className="text-[10px] font-extrabold text-slate-400 tracking-[0.1em] uppercase mb-2">
+                        Contraindications
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {med.contraindications.map(
+                          (contra: string, idx: number) => (
+                            <span
+                              key={idx}
+                              className="text-[11px] font-medium px-2.5 py-1.5 rounded-[10px] bg-amber-50 text-amber-700 border border-amber-200"
+                            >
+                              ⚠️ {contra}
+                            </span>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {hasPrecautions && (
+                    <div>
+                      <p className="text-[10px] font-extrabold text-slate-400 tracking-[0.1em] uppercase mb-2">
+                        Precautions
+                      </p>
+                      <p className="text-[11px] text-slate-700 leading-relaxed px-2.5 py-1.5 rounded-[10px] bg-blue-50 border border-blue-200">
+                        {med.precautions}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Alternatives section */}
+              {hasAlternatives && isExpanded && (
+                <div className="mt-3.5 pt-3.5 border-t border-slate-100">
+                  <p className="text-[10px] font-extrabold text-slate-400 tracking-[0.1em] uppercase mb-2.5">
+                    Alternative Medicines
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {med.alternatives.map((alt: any, altIdx: number) => {
+                      const altName = typeof alt === "string" ? alt : alt.name;
+                      const altType =
+                        typeof alt === "string" ? "alternative" : alt.type;
+                      const isGeneric = altType === "generic";
+                      return (
+                        <span
+                          key={altIdx}
+                          className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-[12px] border ${
+                            isGeneric
+                              ? "text-blue-700 bg-blue-100 border-blue-200"
+                              : "text-purple-700 bg-purple-100 border-purple-200"
+                          }`}
+                        >
+                          {isGeneric ? "◈" : "◆"} {altName}
+                          {isGeneric && (
+                            <span className="text-[9px] font-bold ml-1 opacity-70">
+                              (Generic)
+                            </span>
+                          )}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
@@ -463,7 +717,7 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
             title="Follow-up Appointment"
           />
           <div className="bg-white rounded-[20px] p-4 flex items-center gap-4 shadow-[0_2px_18px_rgba(0,0,0,0.06)]">
-            <div className="rounded-2xl overflow-hidden border border-indigo-100 shrink-0 w-16">
+            <div className="w-16 overflow-hidden border border-indigo-100 rounded-2xl shrink-0">
               <div className="bg-indigo-600 text-white text-[10px] font-extrabold text-center py-1.5 tracking-[0.12em] uppercase">
                 {followDate.toLocaleString("en-IN", { month: "short" })}
               </div>
