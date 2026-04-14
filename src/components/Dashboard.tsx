@@ -1,22 +1,90 @@
 import { useState } from "react";
 import {
-  ActivityIcon,
-  AlertIcon,
-  CalendarIcon,
-  CheckIcon,
-  ClockIcon,
-  CopyIcon,
-  DropletsIcon,
-  FlaskIcon,
-  HeartIcon,
-  LayersIcon,
-  PillIcon,
-  ScopeIcon,
-  UploadIcon,
-} from "./Icons";
+  Activity,
+  AlertTriangle,
+  BadgeCheck,
+  Building2,
+  Calendar,
+  CalendarClock,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  ClipboardCopy,
+  Clock,
+  Droplets,
+  FlaskConical,
+  Heart,
+  Info,
+  Layers,
+  Phone,
+  Pill,
+  RefreshCw,
+  Stethoscope,
+  User,
+} from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Separator } from "./ui/separator";
 
-// ─── Sample Data ─────────────────────────────────────────────────
-export const SAMPLE_DATA = {
+// ─── Types ───────────────────────────────────────────────────────
+interface AlternativeMedicine {
+  name: string;
+  type: string;
+}
+
+interface Medication {
+  name: string;
+  strength: string;
+  dosage: string;
+  frequency: string;
+  route: string;
+  duration: string;
+  instructions?: string;
+  side_effects?: string[];
+  contraindications?: string[];
+  precautions?: string;
+  alternatives?: AlternativeMedicine[];
+}
+
+interface PrescriptionData {
+  prescription_id: string;
+  date_issued: string;
+  chief_complaint?: string | null;
+  diagnosis?: string[];
+  clinical_notes?: string | null;
+  follow_up_date?: string | null;
+  vitals_at_visit?: { BP?: string; FBS?: string; PPBS?: string } | null;
+  patient: {
+    name: string;
+    age: number;
+    gender: string;
+    blood_group?: string | null;
+    date_of_birth?: string;
+    contact_number?: string | null;
+    known_allergies?: string[];
+    chronic_conditions?: string[];
+  };
+  doctor: {
+    name: string;
+    specialization?: string | null;
+    qualifications?: string | null;
+    license_number?: string | null;
+    clinic_name?: string | null;
+    clinic_address?: string | null;
+    contact_number?: string | null;
+  };
+  medications: Medication[];
+}
+
+// ─── Sample data ─────────────────────────────────────────────────
+export const SAMPLE_DATA: PrescriptionData = {
   prescription_id: "RX-2022-1012-001",
   date_issued: "2022-10-12T00:00:00Z",
   patient: {
@@ -26,19 +94,16 @@ export const SAMPLE_DATA = {
     gender: "Male",
     blood_group: null,
     contact_number: null,
-    emergency_contact: null,
     known_allergies: [],
     chronic_conditions: [],
   },
   doctor: {
-    id: null,
     name: "Dr. Amita",
     specialization: "General Dentistry",
     license_number: null,
     qualifications: null,
     clinic_name: "THE White TUSK",
-    clinic_address:
-      "Not specified, contact: +91 8108112511, info@thewhitetusk.com",
+    clinic_address: "Not specified, contact: +91 8108112511, info@thewhitetusk.com",
     contact_number: "+91 8108112511",
   },
   medications: [
@@ -50,20 +115,12 @@ export const SAMPLE_DATA = {
       route: "Oral",
       duration: "5 days",
       instructions: "Take after meals",
-      side_effects: [
-        "Nausea",
-        "Vomiting",
-        "Diarrhea",
-        "Abdominal pain",
-        "Skin rash",
-        "Candidiasis",
-      ],
+      side_effects: ["Nausea", "Vomiting", "Diarrhea", "Abdominal pain", "Skin rash", "Candidiasis"],
       contraindications: [
         "Hypersensitivity to penicillin or clavulanic acid",
         "History of cholestatic jaundice/hepatic dysfunction associated with amoxicillin-clavulanate",
       ],
-      precautions:
-        "Use with caution in patients with renal or hepatic impairment. Inform your doctor if you have mononucleosis. Consult doctor if pregnant or breastfeeding.",
+      precautions: "Use with caution in patients with renal or hepatic impairment.",
       alternatives: [
         { name: "Moxikind-CV 625mg", type: "alternative" },
         { name: "Clavam 625mg", type: "alternative" },
@@ -73,39 +130,24 @@ export const SAMPLE_DATA = {
     },
     {
       name: "Enzoflam",
-      strength:
-        "Diclofenac Potassium 50mg + Paracetamol 325mg + Serratiopeptidase 15mg",
+      strength: "Diclofenac 50mg + Paracetamol 325mg + Serratiopeptidase 15mg",
       dosage: "1 tablet",
       frequency: "Twice a day (morning and night)",
       route: "Oral",
       duration: "5 days",
       instructions: "Take after meals",
-      side_effects: [
-        "Nausea",
-        "Vomiting",
-        "Stomach pain",
-        "Indigestion",
-        "Heartburn",
-        "Diarrhea",
-        "Dizziness",
-        "Drowsiness",
-      ],
+      side_effects: ["Nausea", "Stomach pain", "Indigestion", "Dizziness", "Drowsiness"],
       contraindications: [
-        "Hypersensitivity to NSAIDs, aspirin, or paracetamol",
+        "Hypersensitivity to NSAIDs",
         "Active peptic ulcer",
         "Severe renal or hepatic impairment",
-        "Severe heart failure",
         "Third trimester of pregnancy",
       ],
-      precautions:
-        "Use with caution in patients with asthma, bleeding disorders, cardiovascular disease, or hypertension. Avoid alcohol consumption. Consult doctor if pregnant or breastfeeding.",
+      precautions: "Avoid alcohol. Use with caution in cardiovascular disease or hypertension.",
       alternatives: [
         { name: "Serata-D Tablet", type: "alternative" },
         { name: "Enzoflam-D Tablet", type: "alternative" },
-        {
-          name: "Diclofenac Potassium + Paracetamol + Serratiopeptidase",
-          type: "generic",
-        },
+        { name: "Diclofenac + Paracetamol + Serratiopeptidase", type: "generic" },
       ],
     },
     {
@@ -116,51 +158,33 @@ export const SAMPLE_DATA = {
       route: "Oral",
       duration: "5 days",
       instructions: "Take before meals",
-      side_effects: [
-        "Headache",
-        "Nausea",
-        "Diarrhea",
-        "Abdominal pain",
-        "Flatulence",
-        "Dry mouth",
-        "Dizziness",
-      ],
+      side_effects: ["Headache", "Nausea", "Diarrhea", "Dizziness"],
       contraindications: [
         "Hypersensitivity to pantoprazole or domperidone",
         "Moderate to severe hepatic impairment",
-        "Conditions where gastric motility stimulation is harmful (e.g., GI hemorrhage, mechanical obstruction, perforation)",
-        "Prolactin-releasing pituitary tumor",
-        "Cardiac conduction abnormalities (QT prolongation)",
       ],
-      precautions:
-        "Long-term use may increase the risk of osteoporosis and C. difficile infection. Use with caution in patients with severe renal impairment. Consult doctor if pregnant or breastfeeding.",
+      precautions: "Long-term use may increase risk of osteoporosis.",
       alternatives: [
         { name: "Pantocid-D", type: "alternative" },
         { name: "Pentaloc-D", type: "alternative" },
-        { name: "Nupenta-D", type: "alternative" },
         { name: "Pantoprazole + Domperidone", type: "generic" },
       ],
     },
     {
-      name: "Hexigel gum paint",
+      name: "Hexigel Gum Paint",
       strength: "0.2% Chlorhexidine Gluconate",
       dosage: "Apply a small amount and massage",
       frequency: "Twice a day (morning and night)",
       route: "Topical (oral)",
       duration: "1 week",
       instructions: "Massage onto gums. Do not swallow.",
-      side_effects: [
-        "Temporary staining of teeth and tongue",
-        "Altered taste sensation",
-        "Burning sensation",
-      ],
+      side_effects: ["Temporary staining of teeth", "Altered taste", "Burning sensation"],
       contraindications: ["Hypersensitivity to chlorhexidine"],
-      precautions:
-        "For oral use only. Do not swallow. Avoid contact with eyes and ears. Keep out of reach of children.",
+      precautions: "For oral use only. Do not swallow. Keep out of reach of children.",
       alternatives: [
         { name: "Rexidin M Forte Gel", type: "alternative" },
         { name: "Perio-Aid Gel", type: "alternative" },
-        { name: "Chlorhexidine Gluconate Gel/Mouthwash", type: "generic" },
+        { name: "Chlorhexidine Gluconate Gel", type: "generic" },
       ],
     },
   ],
@@ -181,102 +205,70 @@ const fmtDate = (iso: string) => {
   });
 };
 
-const freqStyle = (freq: string) => {
+const freqBadge = (freq: string) => {
   const f = (freq || "").toLowerCase();
-  if (f.includes("three") || f.includes("3"))
-    return {
-      bg: "bg-orange-50",
-      text: "text-orange-700",
-      dot: "bg-orange-400",
-    };
-  if (f.includes("twice") || f.includes("2"))
-    return { bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-400" };
-  if (f.includes("once") || f.includes("1"))
-    return { bg: "bg-green-50", text: "text-green-700", dot: "bg-green-400" };
-  return { bg: "bg-purple-50", text: "text-purple-700", dot: "bg-purple-400" };
+  if (f.includes("three") || f.includes("3") || f.includes("tid") || f.includes("tds"))
+    return { variant: "orange" as const, label: "TDS" };
+  if (f.includes("twice") || f.includes("2") || f.includes("bd"))
+    return { variant: "info" as const, label: "BD" };
+  if (f.includes("once") || f.includes("1") || f.includes("od"))
+    return { variant: "success" as const, label: "OD" };
+  return { variant: "purple" as const, label: "PRN" };
 };
 
-const buildSummary = (data: any) => {
-  const vitalsStr = data.vitals_at_visit
-    ? `Vitals:  BP ${data.vitals_at_visit.BP}  |  FBS ${data.vitals_at_visit.FBS} mg/dL  |  PPBS ${data.vitals_at_visit.PPBS} mg/dL\n\n`
-    : "";
-  const notesStr = data.clinical_notes ? `Notes: ${data.clinical_notes}\n` : "";
-  const followStr = data.follow_up_date
-    ? `Follow-up: ${data.follow_up_date}\n`
-    : "";
+const isTopical = (route: string) =>
+  (route || "").toLowerCase().includes("topical");
 
-  return `
-PRESCRIPTION: ${data.prescription_id}  |  Date: ${fmtDate(data.date_issued)}
+const buildSummary = (data: PrescriptionData) => {
+  const vitalsStr = data.vitals_at_visit
+    ? `Vitals: BP ${data.vitals_at_visit.BP} | FBS ${data.vitals_at_visit.FBS} mg/dL | PPBS ${data.vitals_at_visit.PPBS} mg/dL\n\n`
+    : "";
+  return `PRESCRIPTION: ${data.prescription_id} | Date: ${fmtDate(data.date_issued)}
 Patient: ${data.patient.name}, ${data.patient.age} yrs, ${data.patient.gender}
-Doctor:  ${data.doctor.name}${data.doctor.specialization ? ` (${data.doctor.specialization})` : ""}
+Doctor: ${data.doctor.name}${data.doctor.specialization ? ` (${data.doctor.specialization})` : ""}
 
 ${vitalsStr}MEDICATIONS:
 ${data.medications
-  .map((m: any, i: number) => {
-    let details = `${i + 1}. ${m.name}${m.strength ? ` ${m.strength}` : ""} — ${m.frequency} (${m.duration})`;
-    if (m.instructions) details += `\n   Instructions: ${m.instructions}`;
-    if (m.side_effects && m.side_effects.length > 0) {
-      details += `\n   Side Effects: ${m.side_effects.join(", ")}`;
-    }
-    if (m.contraindications && m.contraindications.length > 0) {
-      details += `\n   Contraindications: ${m.contraindications.join(", ")}`;
-    }
-    if (m.precautions) {
-      details += `\n   Precautions: ${m.precautions}`;
-    }
-    if (m.alternatives && m.alternatives.length > 0) {
-      const altNames = m.alternatives
-        .map((alt: any) => (typeof alt === "string" ? alt : alt.name))
-        .join(", ");
-      details += `\n   Alternatives: ${altNames}`;
-    }
-    return details;
+  .map((m, i) => {
+    let line = `${i + 1}. ${m.name}${m.strength ? ` ${m.strength}` : ""} — ${m.frequency} for ${m.duration}`;
+    if (m.instructions) line += `\n   ${m.instructions}`;
+    if (m.alternatives?.length)
+      line += `\n   Alternatives: ${m.alternatives.map((a) => a.name).join(", ")}`;
+    return line;
   })
   .join("\n")}
-
-${notesStr}${followStr}
-`.trim();
+${data.clinical_notes ? `\nNotes: ${data.clinical_notes}` : ""}
+${data.follow_up_date ? `Follow-up: ${data.follow_up_date}` : ""}`.trim();
 };
 
-// ─── Section Header ───────────────────────────────────────────────
-interface SectionHeaderProps {
-  icon: React.ReactNode;
-  title: string;
-  iconBg?: string;
-}
+// ─── Sub-components ───────────────────────────────────────────────
 
-const SectionHeader = ({
-  icon,
-  title,
-  iconBg = "bg-slate-50",
-}: SectionHeaderProps) => (
-  <div className="flex items-center gap-2.5 mb-3 mt-6">
-    <div
-      className={`w-[30px] h-[30px] ${iconBg} rounded-[10px] flex items-center justify-center`}
-    >
+const InfoRow = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
+  <div className="flex items-start gap-3 py-2.5">
+    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
       {icon}
-    </div>
-    <span className="text-[11px] font-black text-slate-400 tracking-[0.16em] uppercase">
-      {title}
     </span>
+    <div className="min-w-0">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">{label}</p>
+      <p className="text-sm text-slate-800 mt-0.5 leading-snug">{value}</p>
+    </div>
   </div>
 );
 
-// ─── Dashboard ────────────────────────────────────────────────────
+// ─── Dashboard ───────────────────────────────────────────────────
 interface DashboardProps {
-  data: any;
+  data: unknown;
   onReset: () => void;
 }
 
-const Dashboard = ({ data, onReset }: DashboardProps) => {
+const Dashboard = ({ data: rawData, onReset }: DashboardProps) => {
+  const data = rawData as PrescriptionData;
   const [copied, setCopied] = useState(false);
   const [expandedMeds, setExpandedMeds] = useState<Set<number>>(new Set());
-  const [expandedDetails, setExpandedDetails] = useState<Set<number>>(
-    new Set(),
-  );
+  const [expandedDetails, setExpandedDetails] = useState<Set<number>>(new Set());
+
   const {
-    patient,
-    doctor,
+    patient, doctor,
     vitals_at_visit: vitals,
     medications,
     clinical_notes,
@@ -284,26 +276,19 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
     chief_complaint,
     prescription_id,
     date_issued,
+    diagnosis,
   } = data;
 
-  const toggleAlternatives = (index: number) => {
-    const newSet = new Set(expandedMeds);
-    if (newSet.has(index)) {
-      newSet.delete(index);
-    } else {
-      newSet.add(index);
-    }
-    setExpandedMeds(newSet);
+  const toggleAlts = (i: number) => {
+    const s = new Set(expandedMeds);
+    s.has(i) ? s.delete(i) : s.add(i);
+    setExpandedMeds(s);
   };
 
-  const toggleDetails = (index: number) => {
-    const newSet = new Set(expandedDetails);
-    if (newSet.has(index)) {
-      newSet.delete(index);
-    } else {
-      newSet.add(index);
-    }
-    setExpandedDetails(newSet);
+  const toggleDetails = (i: number) => {
+    const s = new Set(expandedDetails);
+    s.has(i) ? s.delete(i) : s.add(i);
+    setExpandedDetails(s);
   };
 
   const handleCopy = () => {
@@ -315,466 +300,459 @@ const Dashboard = ({ data, onReset }: DashboardProps) => {
   const followDate = follow_up_date ? new Date(follow_up_date) : null;
 
   return (
-    <div className="px-4 pb-16 mx-auto max-w-180">
-      {/* ── Hero Patient Card ───────────────────────────────── */}
-      <div
-        className="rounded-[28px] overflow-hidden px-5 pt-7 pb-6 relative mt-4 animate-fade-up"
-        style={{
-          background:
-            "linear-gradient(135deg,#1D4ED8 0%,#2563EB 55%,#0EA5E9 100%)",
-          boxShadow: "0 12px 48px rgba(37,99,235,.38)",
-        }}
-      >
-        {/* Decorative blobs */}
-        <div className="absolute top-0 right-0 w-52 h-52 bg-white/[0.09] rounded-full translate-x-1/3 -translate-y-2/5 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-36 h-36 bg-white/[0.07] rounded-full -translate-x-1/3 translate-y-2/5 pointer-events-none" />
-        <div className="absolute top-2.5 right-4 text-[80px] font-black text-white/[0.08] leading-none select-none pointer-events-none">
-          ℞
-        </div>
-
-        <div className="relative z-10">
-          {/* RX ID pill */}
-          <div className="inline-flex items-center gap-2 bg-white/[0.16] backdrop-blur px-3 py-1.5 rounded-full mb-3.5">
-            <div className="w-[7px] h-[7px] bg-green-400 rounded-full animate-dot-pulse" />
-            <span className="text-[11px] font-bold text-white/80 tracking-[0.1em]">
-              {prescription_id}
-            </span>
-          </div>
-
-          <p className="text-[26px] font-black text-white tracking-tight leading-tight">
-            {patient.name}
-          </p>
-          <p className="text-[13px] text-blue-200 mt-1">
-            {patient.age} yrs · {patient.gender}
-            {patient.blood_group ? ` · ${patient.blood_group}` : ""}
-          </p>
-
-          {chief_complaint && (
-            <div className="mt-4 bg-white/[0.12] backdrop-blur rounded-[14px] px-3.5 py-2.5">
-              <p className="text-[10px] font-extrabold text-blue-300 tracking-[0.12em] uppercase mb-0.5">
-                Chief Complaint
-              </p>
-              <p className="text-[13px] font-bold text-white">
-                {chief_complaint}
-              </p>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between mt-5">
-            <div className="flex items-center gap-1.5 text-[12px] text-blue-200/90">
-              <CalendarIcon />
-              {fmtDate(date_issued)}
-            </div>
-            <button
-              onClick={handleCopy}
-              className="flex items-center gap-1.5 bg-white/[0.18] hover:bg-white/[0.28] text-white text-[12px] font-bold px-3.5 py-2 rounded-full border-none cursor-pointer transition-colors"
-            >
-              {copied ? <CheckIcon /> : <CopyIcon />}
-              {copied ? "Copied!" : "Copy Summary"}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Doctor ──────────────────────────────────────────── */}
-      <SectionHeader
-        icon={<ScopeIcon />}
-        title="Prescribing Physician"
-        iconBg="bg-green-50"
-      />
-      <div className="bg-white rounded-[22px] p-5 shadow-[0_2px_18px_rgba(0,0,0,0.06)] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-green-50 translate-x-1/3 -translate-y-1/3 opacity-70" />
-        <div className="relative z-10 flex items-start gap-4">
-          <div
-            className="w-13 h-13 rounded-[18px] flex items-center justify-center shrink-0"
-            style={{
-              background: "linear-gradient(135deg,#34D399,#0D9488)",
-              boxShadow: "0 6px 16px rgba(20,184,166,.3)",
-            }}
-          >
-            <ScopeIcon />
-          </div>
-          <div className="flex-1">
-            <p className="text-[16px] font-extrabold text-slate-900 leading-tight">
-              {doctor.name}
-            </p>
-            {doctor.specialization && (
-              <p className="text-[12px] text-slate-500 mt-0.5 font-semibold">
-                {doctor.specialization}
-              </p>
-            )}
-            {doctor.qualifications && (
-              <p className="text-[12px] text-slate-500 mt-0.5 leading-relaxed">
-                {doctor.qualifications}
-              </p>
-            )}
-            <div className="flex flex-wrap gap-2 mt-3">
-              {doctor.clinic_name && (
-                <span className="text-[11px] font-bold bg-green-50 text-green-700 px-2.5 py-1 rounded-full">
-                  {doctor.clinic_name}
+    <div className="animate-[fadeIn_0.4s_ease_both]">
+      {/* ── Prescription Header Banner ───────────────────────── */}
+      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 text-white">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div>
+              {/* Rx ID + Verified */}
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-3 py-1 text-xs font-semibold text-white/90">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-[dot-pulse_1.6s_ease-in-out_infinite]" />
+                  {prescription_id}
                 </span>
-              )}
-              {doctor.contact_number && (
-                <span className="text-[11px] font-bold bg-slate-50 text-slate-500 px-2.5 py-1 rounded-full">
-                  {doctor.contact_number}
+                <span className="inline-flex items-center gap-1 rounded-full bg-green-500/20 border border-green-400/30 px-2.5 py-1 text-xs font-semibold text-green-300">
+                  <BadgeCheck className="w-3.5 h-3.5" />
+                  Verified
                 </span>
-              )}
-            </div>
-            {doctor.clinic_address && (
-              <p className="text-[11px] text-slate-600 mt-2 leading-relaxed">
-                {doctor.clinic_address}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Vitals ─────────────────────────────────────────── */}
-      {vitals && (
-        <>
-          <SectionHeader icon={<ActivityIcon />} title="Vitals at Visit" />
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              {
-                icon: <HeartIcon />,
-                label: "Blood Pressure",
-                value: vitals?.BP,
-                unit: "mmHg",
-                blob: "bg-red-500",
-                iconBg: "bg-red-50",
-              },
-              {
-                icon: <DropletsIcon />,
-                label: "FBS",
-                value: vitals?.FBS,
-                unit: "mg/dL",
-                blob: "bg-orange-500",
-                iconBg: "bg-orange-50",
-              },
-              {
-                icon: <FlaskIcon />,
-                label: "PPBS",
-                value: vitals?.PPBS,
-                unit: "mg/dL",
-                blob: "bg-violet-500",
-                iconBg: "bg-violet-50",
-              },
-            ].map(({ icon, label, value, unit, blob, iconBg }) => (
-              <div
-                key={label}
-                className="bg-white rounded-[20px] p-4 relative overflow-hidden shadow-[0_2px_18px_rgba(0,0,0,0.06)]"
-              >
-                <div
-                  className={`absolute top-0 right-0 w-16 h-16 ${blob} opacity-[0.08] rounded-full translate-x-1/3 -translate-y-1/3`}
-                />
-                <div
-                  className={`w-8 h-8 ${iconBg} rounded-xl flex items-center justify-center mb-2.5`}
-                >
-                  {icon}
-                </div>
-                <p className="text-[18px] font-black text-slate-900 leading-none">
-                  {value ?? "—"}
-                  {value && (
-                    <span className="text-[10px] font-bold text-slate-400 ml-0.5">
-                      {unit}
-                    </span>
-                  )}
-                </p>
-                <p className="text-[10px] font-extrabold text-slate-400 tracking-[0.1em] uppercase mt-1.5">
-                  {label}
-                </p>
               </div>
-            ))}
-          </div>
-        </>
-      )}
 
-      {/* ── Medications ─────────────────────────────────────── */}
-      <SectionHeader
-        icon={<PillIcon />}
-        title={`Medications · ${medications.length}`}
-      />
-      <div className="flex flex-col gap-3">
-        {medications.map((med: any, i: number) => {
-          const fs = freqStyle(med.frequency);
-          const isTopical = (med.route || "").toLowerCase() === "topical";
-          const validStrength =
-            med.strength && med.strength !== "Not specified";
-          const hasAlternatives =
-            med.alternatives && med.alternatives.length > 0;
-          const hasSideEffects =
-            med.side_effects && med.side_effects.length > 0;
-          const hasContraindications =
-            med.contraindications && med.contraindications.length > 0;
-          const hasPrecautions = med.precautions && med.precautions.length > 0;
-          const hasDetails =
-            hasSideEffects || hasContraindications || hasPrecautions;
-          const isExpanded = expandedMeds.has(i);
-          const detailsExpanded = expandedDetails.has(i);
-          return (
-            <div
-              key={i}
-              className="bg-white rounded-[20px] pl-5 pr-4 py-4 relative overflow-hidden shadow-[0_2px_14px_rgba(0,0,0,0.05)] animate-fade-up"
-              style={{ animationDelay: `${i * 0.05}s` }}
-            >
-              {/* Left accent bar */}
-              <div
-                className={`absolute left-0 top-3 bottom-3 w-[3px] rounded-r-full ${isTopical ? "bg-emerald-500" : "bg-blue-500"}`}
-              />
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                {patient.name}
+              </h1>
+              <p className="mt-1 text-blue-200 text-sm">
+                {patient.age} yrs · {patient.gender}
+                {patient.blood_group ? ` · ${patient.blood_group}` : ""}
+              </p>
 
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-[15px] font-extrabold text-slate-900 leading-tight">
-                      {med.name}
-                    </span>
-                    {validStrength && (
-                      <span className="text-[11px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full">
-                        {med.strength}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[12px] text-slate-500 mt-1">
-                    {med.dosage}
+              {chief_complaint && (
+                <div className="mt-3 inline-block rounded-lg bg-white/10 border border-white/15 px-3.5 py-2">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-blue-300 mb-0.5">
+                    Chief Complaint
                   </p>
-                  {med.instructions && (
-                    <p className="text-[11px] text-slate-600 mt-1.5 italic">
-                      💡 {med.instructions}
-                    </p>
-                  )}
+                  <p className="text-sm font-semibold text-white">{chief_complaint}</p>
                 </div>
-                <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-400 shrink-0 mt-0.5">
-                  <ClockIcon />
-                  {med.duration || "—"}
+              )}
+
+              {diagnosis && diagnosis.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {diagnosis.map((d, i) => (
+                    <span key={i} className="rounded-full bg-white/15 border border-white/20 px-2.5 py-0.5 text-xs text-white/90">
+                      {d}
+                    </span>
+                  ))}
                 </div>
-              </div>
+              )}
+            </div>
 
-              <div className="flex flex-wrap items-center gap-2 mt-3">
-                {/* Frequency badge */}
-                <span
-                  className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full ${fs.bg} ${fs.text}`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${fs.dot}`} />
-                  {med.frequency}
-                </span>
-                {/* Route badge */}
-                <span
-                  className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full ${
-                    isTopical
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "bg-blue-50 text-blue-700"
-                  }`}
-                >
-                  {isTopical ? <LayersIcon /> : <PillIcon />}
-                  {med.route}
-                </span>
-                {/* Details toggle */}
-                {hasDetails && (
-                  <button
-                    onClick={() => toggleDetails(i)}
-                    className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
-                      detailsExpanded
-                        ? "bg-red-50 text-red-700"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
-                  >
-                    <AlertIcon />
-                    {detailsExpanded ? "Hide details" : "Details"}
-                  </button>
-                )}
-                {/* Alternatives toggle */}
-                {hasAlternatives && (
-                  <button
-                    onClick={() => toggleAlternatives(i)}
-                    className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
-                      isExpanded
-                        ? "bg-purple-50 text-purple-700"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
-                  >
-                    <FlaskIcon />
-                    {isExpanded ? "Hide alternatives" : "Alternatives"}
-                  </button>
-                )}
+            {/* Right side: date + copy */}
+            <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-3 shrink-0">
+              <div className="flex items-center gap-1.5 text-sm text-blue-200">
+                <Calendar className="w-4 h-4" />
+                {fmtDate(date_issued)}
               </div>
+              <Button
+                onClick={handleCopy}
+                size="sm"
+                className="bg-white/15 hover:bg-white/25 text-white border border-white/20 shadow-none"
+              >
+                {copied ? <Check className="w-3.5 h-3.5" /> : <ClipboardCopy className="w-3.5 h-3.5" />}
+                {copied ? "Copied!" : "Copy Summary"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-              {/* Details section */}
-              {hasDetails && detailsExpanded && (
-                <div className="mt-3.5 pt-3.5 border-t border-slate-100 space-y-3.5">
-                  {hasSideEffects && (
-                    <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 tracking-[0.1em] uppercase mb-2">
-                        Side Effects
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {med.side_effects.map((effect: string, idx: number) => (
-                          <span
-                            key={idx}
-                            className="text-[11px] font-medium px-2.5 py-1.5 rounded-[10px] bg-red-50 text-red-700 border border-red-200"
-                          >
-                            • {effect}
-                          </span>
-                        ))}
+      {/* ── Main content grid ────────────────────────────────── */}
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6">
+
+          {/* ════════════════════════════════════════
+              Left Column — Patient, Doctor, Vitals
+          ════════════════════════════════════════ */}
+          <div className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+
+            {/* Patient Card */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100">
+                    <User className="h-5 w-5 text-blue-600" />
+                  </span>
+                  <CardTitle>Patient</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-0 divide-y divide-slate-100">
+                <InfoRow icon={<User className="w-3.5 h-3.5" />} label="Full Name" value={patient.name} />
+                <InfoRow
+                  icon={<Activity className="w-3.5 h-3.5" />}
+                  label="Age & Gender"
+                  value={`${patient.age} years · ${patient.gender}`}
+                />
+                {patient.blood_group && (
+                  <InfoRow icon={<Heart className="w-3.5 h-3.5" />} label="Blood Group" value={patient.blood_group} />
+                )}
+                {patient.contact_number && (
+                  <InfoRow icon={<Phone className="w-3.5 h-3.5" />} label="Contact" value={patient.contact_number} />
+                )}
+                {patient.known_allergies && patient.known_allergies.length > 0 && (
+                  <div className="py-2.5">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 mb-2">Known Allergies</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {patient.known_allergies.map((a) => (
+                        <Badge key={a} variant="destructive" size="sm">{a}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {patient.chronic_conditions && patient.chronic_conditions.length > 0 && (
+                  <div className="py-2.5">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 mb-2">Chronic Conditions</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {patient.chronic_conditions.map((c) => (
+                        <Badge key={c} variant="warning" size="sm">{c}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Doctor Card */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-100">
+                    <Stethoscope className="h-5 w-5 text-teal-600" />
+                  </span>
+                  <CardTitle>Prescribing Physician</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-0 divide-y divide-slate-100">
+                <InfoRow icon={<User className="w-3.5 h-3.5" />} label="Doctor" value={doctor.name} />
+                {doctor.specialization && (
+                  <InfoRow icon={<Stethoscope className="w-3.5 h-3.5" />} label="Specialization" value={doctor.specialization} />
+                )}
+                {doctor.qualifications && (
+                  <InfoRow icon={<BadgeCheck className="w-3.5 h-3.5" />} label="Qualifications" value={doctor.qualifications} />
+                )}
+                {doctor.clinic_name && (
+                  <InfoRow icon={<Building2 className="w-3.5 h-3.5" />} label="Clinic" value={doctor.clinic_name} />
+                )}
+                {doctor.contact_number && (
+                  <InfoRow icon={<Phone className="w-3.5 h-3.5" />} label="Contact" value={doctor.contact_number} />
+                )}
+                {doctor.clinic_address && (
+                  <InfoRow icon={<Building2 className="w-3.5 h-3.5" />} label="Address" value={doctor.clinic_address} />
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Vitals Card */}
+            {vitals && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100">
+                      <Activity className="h-5 w-5 text-red-600" />
+                    </span>
+                    <CardTitle>Vitals at Visit</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      { icon: <Heart className="w-4 h-4 text-red-500" />, label: "Blood Pressure", value: vitals?.BP, unit: "mmHg", accent: "bg-red-50 border-red-100" },
+                      { icon: <Droplets className="w-4 h-4 text-orange-500" />, label: "FBS", value: vitals?.FBS, unit: "mg/dL", accent: "bg-orange-50 border-orange-100" },
+                      { icon: <FlaskConical className="w-4 h-4 text-violet-500" />, label: "PPBS", value: vitals?.PPBS, unit: "mg/dL", accent: "bg-violet-50 border-violet-100" },
+                    ].map(({ icon, label, value, unit, accent }) => (
+                      <div key={label} className={`rounded-xl border p-3 ${accent}`}>
+                        {icon}
+                        <p className="mt-2 text-base font-bold text-slate-900 leading-none">
+                          {value ?? "—"}
+                          {value && <span className="text-[10px] font-semibold text-slate-400 ml-0.5">{unit}</span>}
+                        </p>
+                        <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-400">{label}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Follow-up Card */}
+            {followDate && (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="shrink-0 overflow-hidden rounded-xl border border-indigo-100 w-14 text-center">
+                      <div className="bg-indigo-600 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                        {followDate.toLocaleString("en-IN", { month: "short" })}
+                      </div>
+                      <div className="bg-white py-2 text-2xl font-black text-indigo-900 leading-none">
+                        {followDate.getDate()}
                       </div>
                     </div>
-                  )}
-                  {hasContraindications && (
                     <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 tracking-[0.1em] uppercase mb-2">
-                        Contraindications
+                      <p className="font-semibold text-slate-900 text-sm">
+                        {followDate.toLocaleDateString("en-IN", { weekday: "long" })}
                       </p>
-                      <div className="flex flex-wrap gap-2">
-                        {med.contraindications.map(
-                          (contra: string, idx: number) => (
-                            <span
-                              key={idx}
-                              className="text-[11px] font-medium px-2.5 py-1.5 rounded-[10px] bg-amber-50 text-amber-700 border border-amber-200"
-                            >
-                              ⚠️ {contra}
-                            </span>
-                          ),
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {followDate.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                      </p>
+                      <p className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-indigo-600">
+                        <CalendarClock className="w-3.5 h-3.5" />
+                        Scheduled Review
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* ════════════════════════════════════════
+              Right Column — Medications + Notes
+          ════════════════════════════════════════ */}
+          <div className="space-y-4">
+
+            {/* Medications section header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Pill className="w-5 h-5 text-slate-500" />
+                <h2 className="text-base font-semibold text-slate-900">
+                  Medications
+                </h2>
+                <Badge variant="secondary" className="font-semibold">
+                  {medications.length}
+                </Badge>
+              </div>
+            </div>
+
+            {/* Medication Cards */}
+            {medications.map((med, i) => {
+              const freq = freqBadge(med.frequency);
+              const topical = isTopical(med.route);
+              const validStrength = med.strength && med.strength !== "Not specified";
+              const hasAlts = (med.alternatives?.length ?? 0) > 0;
+              const hasSideEffects = (med.side_effects?.length ?? 0) > 0;
+              const hasContra = (med.contraindications?.length ?? 0) > 0;
+              const hasPrecautions = !!med.precautions;
+              const hasDetails = hasSideEffects || hasContra || hasPrecautions;
+              const altsOpen = expandedMeds.has(i);
+              const detailsOpen = expandedDetails.has(i);
+
+              return (
+                <Card
+                  key={i}
+                  className="overflow-hidden animate-[fadeUp_0.4s_cubic-bezier(0.22,1,0.36,1)_both]"
+                  style={{ animationDelay: `${i * 0.06}s` }}
+                >
+                  {/* Accent top border */}
+                  <div className={`h-1 w-full ${topical ? "bg-teal-500" : "bg-blue-500"}`} />
+
+                  <CardContent className="p-5">
+                    {/* Top row: name + duration */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[15px] font-bold text-slate-900 leading-tight">
+                            {med.name}
+                          </span>
+                          {validStrength && (
+                            <Badge variant="secondary" size="sm">
+                              {med.strength}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="mt-1 text-sm text-slate-500">{med.dosage}</p>
+                        {med.instructions && (
+                          <p className="mt-1.5 flex items-start gap-1.5 text-sm text-slate-600">
+                            <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-blue-500" />
+                            {med.instructions}
+                          </p>
                         )}
                       </div>
+                      <div className="flex items-center gap-1.5 shrink-0 text-xs font-medium text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5">
+                        <Clock className="w-3.5 h-3.5" />
+                        {med.duration || "—"}
+                      </div>
                     </div>
-                  )}
-                  {hasPrecautions && (
-                    <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 tracking-[0.1em] uppercase mb-2">
-                        Precautions
-                      </p>
-                      <p className="text-[11px] text-slate-700 leading-relaxed px-2.5 py-1.5 rounded-[10px] bg-blue-50 border border-blue-200">
-                        {med.precautions}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
 
-              {/* Alternatives section */}
-              {hasAlternatives && isExpanded && (
-                <div className="mt-3.5 pt-3.5 border-t border-slate-100">
-                  <p className="text-[10px] font-extrabold text-slate-400 tracking-[0.1em] uppercase mb-2.5">
-                    Alternative Medicines
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    {med.alternatives.map((alt: any, altIdx: number) => {
-                      const altName = typeof alt === "string" ? alt : alt.name;
-                      const altType =
-                        typeof alt === "string" ? "alternative" : alt.type;
-                      const isGeneric = altType === "generic";
-                      return (
-                        <span
-                          key={altIdx}
-                          className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-[12px] border ${
-                            isGeneric
-                              ? "text-blue-700 bg-blue-100 border-blue-200"
-                              : "text-purple-700 bg-purple-100 border-purple-200"
-                          }`}
+                    {/* Badges row */}
+                    <div className="flex flex-wrap items-center gap-2 mt-4">
+                      {/* Frequency */}
+                      <Badge variant={freq.variant}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
+                        {med.frequency}
+                      </Badge>
+
+                      {/* Route */}
+                      <Badge variant={topical ? "teal" : "info"}>
+                        {topical ? <Layers className="w-3 h-3" /> : <Pill className="w-3 h-3" />}
+                        {med.route}
+                      </Badge>
+
+                      {/* Details toggle */}
+                      {hasDetails && (
+                        <button
+                          onClick={() => toggleDetails(i)}
+                          className={[
+                            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors cursor-pointer border",
+                            detailsOpen
+                              ? "bg-red-50 text-red-700 border-red-200"
+                              : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100",
+                          ].join(" ")}
                         >
-                          {isGeneric ? "◈" : "◆"} {altName}
-                          {isGeneric && (
-                            <span className="text-[9px] font-bold ml-1 opacity-70">
-                              (Generic)
-                            </span>
+                          <AlertTriangle className="w-3 h-3" />
+                          Details
+                          {detailsOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                        </button>
+                      )}
+
+                      {/* Alternatives toggle */}
+                      {hasAlts && (
+                        <button
+                          onClick={() => toggleAlts(i)}
+                          className={[
+                            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors cursor-pointer border",
+                            altsOpen
+                              ? "bg-purple-50 text-purple-700 border-purple-200"
+                              : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100",
+                          ].join(" ")}
+                        >
+                          <FlaskConical className="w-3 h-3" />
+                          Alternatives
+                          {altsOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                        </button>
+                      )}
+                    </div>
+
+                    {/* ── Details panel ─────────────────────────── */}
+                    {hasDetails && detailsOpen && (
+                      <div className="mt-4 animate-[slideDown_0.25s_ease]">
+                        <Separator className="mb-4" />
+                        <div className="space-y-4">
+                          {hasSideEffects && (
+                            <div>
+                              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 mb-2">
+                                Side Effects
+                              </p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {med.side_effects!.map((e, idx) => (
+                                  <Badge key={idx} variant="destructive" size="sm">
+                                    {e}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
                           )}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                          {hasContra && (
+                            <div>
+                              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 mb-2">
+                                Contraindications
+                              </p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {med.contraindications!.map((c, idx) => (
+                                  <Badge key={idx} variant="warning" size="sm">
+                                    {c}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {hasPrecautions && (
+                            <div>
+                              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 mb-2">
+                                Precautions
+                              </p>
+                              <p className="rounded-lg bg-blue-50 border border-blue-100 px-3 py-2 text-sm text-blue-900 leading-relaxed">
+                                {med.precautions}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
-      {/* ── Clinical Notes ───────────────────────────────────── */}
-      {clinical_notes && (
-        <>
-          <SectionHeader
-            icon={<AlertIcon />}
-            title="Clinical Notes"
-            iconBg="bg-amber-50"
-          />
-          <div className="bg-amber-50 border border-amber-200 rounded-[20px] p-4">
-            <div className="flex gap-3">
-              <div className="w-7 h-7 bg-amber-200 rounded-[10px] flex items-center justify-center shrink-0 mt-0.5">
-                <AlertIcon />
-              </div>
-              <p className="text-[13px] font-medium text-amber-900 leading-relaxed">
-                {clinical_notes}
-              </p>
-            </div>
-          </div>
-        </>
-      )}
+                    {/* ── Alternatives panel ────────────────────── */}
+                    {hasAlts && altsOpen && (
+                      <div className="mt-4 animate-[slideDown_0.25s_ease]">
+                        <Separator className="mb-4" />
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 mb-2.5">
+                          Alternative Medicines
+                        </p>
+                        <div className="flex flex-col gap-2">
+                          {med.alternatives!.map((alt, altIdx) => {
+                            const name = typeof alt === "string" ? alt : alt.name;
+                            const type = typeof alt === "string" ? "alternative" : alt.type;
+                            const isGeneric = type === "generic";
+                            return (
+                              <div
+                                key={altIdx}
+                                className={[
+                                  "flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-sm font-medium",
+                                  isGeneric
+                                    ? "bg-blue-50 border-blue-200 text-blue-800"
+                                    : "bg-purple-50 border-purple-200 text-purple-800",
+                                ].join(" ")}
+                              >
+                                <FlaskConical className={`w-3.5 h-3.5 shrink-0 ${isGeneric ? "text-blue-500" : "text-purple-500"}`} />
+                                <span className="flex-1">{name}</span>
+                                {isGeneric && (
+                                  <Badge variant="info" size="sm">Generic</Badge>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
 
-      {/* ── Follow-up ────────────────────────────────────────── */}
-      {followDate && (
-        <>
-          <SectionHeader
-            icon={<CalendarIcon />}
-            title="Follow-up Appointment"
-          />
-          <div className="bg-white rounded-[20px] p-4 flex items-center gap-4 shadow-[0_2px_18px_rgba(0,0,0,0.06)]">
-            <div className="w-16 overflow-hidden border border-indigo-100 rounded-2xl shrink-0">
-              <div className="bg-indigo-600 text-white text-[10px] font-extrabold text-center py-1.5 tracking-[0.12em] uppercase">
-                {followDate.toLocaleString("en-IN", { month: "short" })}
-              </div>
-              <div className="bg-white text-indigo-900 text-[26px] font-black text-center py-1.5 leading-none">
-                {followDate.getDate()}
-              </div>
-            </div>
-            <div>
-              <p className="text-[15px] font-extrabold text-slate-900">
-                {followDate.toLocaleDateString("en-IN", { weekday: "long" })}
-              </p>
-              <p className="text-[13px] text-slate-500 mt-0.5">
-                {followDate.toLocaleDateString("en-IN", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
-              <p className="flex items-center gap-1 text-[11px] font-bold text-indigo-600 mt-1.5">
-                <ClockIcon /> Scheduled Review
-              </p>
-            </div>
-          </div>
-        </>
-      )}
+            {/* Clinical Notes */}
+            {clinical_notes && (
+              <Alert variant="warning">
+                <AlertTitle className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4" />
+                  Clinical Notes
+                </AlertTitle>
+                <AlertDescription className="mt-1">{clinical_notes}</AlertDescription>
+              </Alert>
+            )}
 
-      {/* ── Reset ────────────────────────────────────────────── */}
-      <div className="bg-red-50 border border-red-200 rounded-[20px] p-4 my-6">
-        <div className="flex gap-3">
-          <div className="w-7 h-7 bg-red-200 rounded-[10px] flex items-center justify-center shrink-0 mt-0.5">
-            <AlertIcon />
-          </div>
-          <div>
-            <p className="text-[13px] font-bold text-red-900 mb-1">
-              ⚠️ Important Disclaimer
-            </p>
-            <p className="text-[12px] font-medium text-red-800 leading-relaxed">
-              This prescription information has been transcribed from an image
-              using AI technology. While we strive for accuracy, transcription
-              errors can occur.{" "}
-              <span className="font-bold">
-                Do not rely solely on this information for medical decisions.
-              </span>{" "}
-              Always consult with your doctor or pharmacist to verify the
-              prescription details and get professional guidance before taking
-              any medication.
-            </p>
+            {/* Disclaimer */}
+            <Alert variant="destructive">
+              <AlertTitle className="flex items-center gap-2 text-red-800">
+                <AlertTriangle className="w-4 h-4 text-red-600" />
+                Important Disclaimer
+              </AlertTitle>
+              <AlertDescription className="mt-1 text-red-800">
+                This prescription has been transcribed from an image using AI. While we strive for
+                accuracy, transcription errors can occur.{" "}
+                <strong>Do not rely solely on this information for medical decisions.</strong> Always
+                consult your doctor or pharmacist to verify details before taking any medication.
+              </AlertDescription>
+            </Alert>
+
+            {/* Reset */}
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={onReset}
+              className="w-full border-dashed border-slate-300 text-slate-500 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Upload another prescription
+            </Button>
           </div>
         </div>
       </div>
-
-      <button
-        onClick={onReset}
-        className="w-full mt-6 py-3.5 rounded-[20px] border-2 border-dashed border-slate-200 bg-transparent text-slate-400 font-bold text-[13px] flex items-center justify-center gap-2 cursor-pointer hover:border-blue-300 hover:text-blue-500 transition-colors"
-      >
-        <UploadIcon /> Upload another prescription
-      </button>
     </div>
   );
 };

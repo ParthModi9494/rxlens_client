@@ -2,28 +2,26 @@ import { useState } from "react";
 import Dashboard from "./components/Dashboard";
 import LoadingScreen from "./components/LoadingScreen";
 import UploadScreen from "./components/UploadScreen";
+import { Badge } from "./components/ui/badge";
 
-// ─── App ──────────────────────────────────────────────────────────
 const App = () => {
-  const [screen, setScreen] = useState("upload"); // "upload" | "loading" | "dashboard"
-  const [data, setData] = useState(null);
+  const [screen, setScreen] = useState<"upload" | "loading" | "dashboard">("upload");
+  const [data, setData] = useState<unknown>(null);
 
   const handleUpload = async (blob: Blob) => {
     setScreen("loading");
     try {
-      // Create FormData and append file
       const formData = new FormData();
       formData.append("file", blob, "prescription.jpg");
 
-      // Send to API
       const apiUrl = import.meta.env.VITE_API_ENDPOINT_URL;
       const res = await fetch(`${apiUrl}/api/v1/parse-prescription`, {
         method: "POST",
         body: formData,
       });
 
-      const data = await res.json();
-      setData(data);
+      const result = await res.json();
+      setData(result);
       setScreen("dashboard");
     } catch (err) {
       console.error("Error parsing prescription:", err);
@@ -37,35 +35,43 @@ const App = () => {
   };
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        background: "linear-gradient(180deg,#EEF3FF 0%,#F8FAFF 60%,#fff 100%)",
-        fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif",
-      }}
-    >
-      {/* Navbar */}
-      <div className="sticky top-0 z-50 flex items-center px-5 py-2.5 bg-blue-50/90 backdrop-blur-lg border-b border-black/5">
-        <div
-          className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[13px] font-black mr-2"
-          style={{ background: "linear-gradient(135deg,#2563EB,#1D4ED8)" }}
-        >
-          ℞
-        </div>
-        <span className="text-[15px] font-black text-slate-800 tracking-tight">
-          RxLens
-        </span>
-        {screen === "dashboard" && (
-          <div className="ml-auto flex items-center gap-1.5 text-[11px] font-bold text-green-600">
-            <div className="w-1.75 h-1.75 bg-green-500 rounded-full animate-dot-pulse" />
-            Verified
-          </div>
-        )}
-      </div>
+    <div className="min-h-screen bg-slate-50">
+      {/* ── Navbar ──────────────────────────────────────────── */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex h-14 items-center justify-between">
+            {/* Logo */}
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-600 text-white text-sm font-black select-none">
+                ℞
+              </div>
+              <span className="text-[15px] font-bold text-slate-900 tracking-tight">
+                RxLens
+              </span>
+            </div>
 
+            {/* Status indicators */}
+            <div className="flex items-center gap-3">
+              {screen === "dashboard" && (
+                <Badge variant="success" className="flex items-center gap-1.5 font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-[dot-pulse_1.6s_ease-in-out_infinite]" />
+                  Verified
+                </Badge>
+              )}
+              {screen === "loading" && (
+                <Badge variant="info" className="font-semibold">
+                  Processing…
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ── Screen content ──────────────────────────────────── */}
       {screen === "upload" && <UploadScreen onUpload={handleUpload} />}
       {screen === "loading" && <LoadingScreen />}
-      {screen === "dashboard" && data && (
+      {screen === "dashboard" && data != null && (
         <Dashboard data={data} onReset={handleReset} />
       )}
     </div>

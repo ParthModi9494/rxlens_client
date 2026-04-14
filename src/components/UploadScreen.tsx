@@ -1,127 +1,206 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import {
+  Check,
+  ChevronRight,
+  FileImage,
+  Microscope,
+  ShieldCheck,
+  Sparkles,
+  Upload,
+  Zap,
+} from "lucide-react";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { Card } from "./ui/card";
 import sampleImage from "../assets/Sample.jpeg";
-import { ChevronIcon, FileIcon, SparkleIcon, UploadIcon } from "./Icons";
 
 interface UploadScreenProps {
   onUpload: (blob: Blob) => void;
 }
 
+const FEATURES = [
+  "Extracts every medication, dose & frequency",
+  "Surfaces alternatives and generic options",
+  "Highlights side effects & contraindications",
+];
+
 const UploadScreen = ({ onUpload }: UploadScreenProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const handleFileUpload = (file: File) => {
+  const handleFile = (file: File) => {
     onUpload(file);
   };
 
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFile(file);
+  };
+
+  const handleDemo = async () => {
+    try {
+      const response = await fetch(sampleImage);
+      const blob = await response.blob();
+      onUpload(blob);
+    } catch (err) {
+      console.error("Error loading sample:", err);
+    }
+  };
+
   return (
-    <div className="max-w-180 mx-auto px-4 animate-fade-up">
-      {/* Hero copy */}
-      <div className="text-center pt-9 pb-7">
-        <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-600 text-[11px] font-extrabold tracking-[0.1em] uppercase px-3.5 py-1.5 rounded-full mb-4">
-          <SparkleIcon /> AI-Powered OCR
-        </div>
-        <h1 className="text-[32px] font-black text-slate-900 leading-[1.1] tracking-tight">
-          Prescription
-          <br />
-          <span className="text-blue-600">Insight</span>
-        </h1>
-        <p className="text-slate-400 text-sm mt-2.5 leading-relaxed">
-          Upload a photo of any prescription to
-          <br />
-          instantly parse and visualize it.
-        </p>
-      </div>
+    <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 py-10 lg:py-16 items-center">
 
-      {/* Drop zone */}
-      <div
-        onClick={() => inputRef.current?.click()}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          e.preventDefault();
-          const file = e.dataTransfer.files?.[0];
-          if (file) handleFileUpload(file);
-        }}
-        className="border-2 border-dashed border-slate-200 rounded-[28px] bg-white cursor-pointer relative overflow-hidden shadow-[0_4px_40px_rgba(0,0,0,0.06)] hover:border-blue-300 hover:shadow-[0_0_0_5px_rgba(59,130,246,0.1)] transition-all duration-200"
-      >
-        {/* Decorative blobs */}
-        <div className="absolute top-0 right-0 w-36 h-36 bg-blue-50 rounded-full translate-x-1/3 -translate-y-2/5 opacity-70 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-28 h-28 bg-green-50 rounded-full -translate-x-1/3 translate-y-2/5 opacity-70 pointer-events-none" />
+        {/* ── Left: Hero copy ─────────────────────────────────── */}
+        <div className="animate-[fadeUp_0.5s_cubic-bezier(0.22,1,0.36,1)_both]">
+          <Badge variant="info" className="mb-5 font-semibold">
+            <Sparkles className="w-3 h-3" />
+            AI-Powered OCR
+          </Badge>
 
-        <div className="relative z-10 flex flex-col items-center gap-4 py-14 px-6">
-          {/* Pulsing upload icon */}
-          <div className="relative flex items-center justify-center">
-            <div className="absolute inset-[-6px] bg-blue-400 rounded-[20px] animate-pulse-ring" />
-            <div
-              className="relative z-10 w-16 h-16 rounded-[18px] flex items-center justify-center"
-              style={{
-                background: "linear-gradient(135deg,#3B82F6,#1D4ED8)",
-                boxShadow: "0 8px 24px rgba(37,99,235,.35)",
-              }}
-            >
-              <UploadIcon />
-            </div>
-          </div>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5">
+            Read any prescription
+            <br />
+            <span className="text-blue-600">in seconds.</span>
+          </h1>
 
-          <div className="text-center">
-            <p className="text-[15px] font-bold text-slate-800">
-              Drop prescription here
-            </p>
-            <p className="text-[13px] text-slate-400 mt-1">
-              or tap to choose from gallery
-            </p>
-          </div>
+          <p className="text-slate-500 text-lg leading-relaxed mb-8 max-w-md">
+            Upload a photo of any handwritten or printed prescription and get a complete,
+            structured breakdown — instantly.
+          </p>
 
-          <div className="flex items-center gap-2">
-            {["JPG", "PNG", "WEBP", "HEIC"].map((f, i) => (
+          {/* Feature list */}
+          <ul className="space-y-3.5 mb-10">
+            {FEATURES.map((f) => (
+              <li key={f} className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100">
+                  <Check className="h-3 w-3 text-blue-600 stroke-[2.5]" />
+                </span>
+                <span className="text-slate-600 text-sm leading-snug">{f}</span>
+              </li>
+            ))}
+          </ul>
+
+          {/* Trust badges */}
+          <div className="flex flex-wrap gap-3">
+            {[
+              { icon: <Zap className="w-3.5 h-3.5" />, label: "Instant results" },
+              { icon: <ShieldCheck className="w-3.5 h-3.5" />, label: "Secure & private" },
+              { icon: <Microscope className="w-3.5 h-3.5" />, label: "Gemini 2.5 Flash" },
+            ].map(({ icon, label }) => (
               <span
-                key={f}
-                className={`text-[11px] font-bold ${i % 2 === 0 ? "text-blue-500" : "text-slate-400"}`}
+                key={label}
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600"
               >
-                {f}
-                {i < 3 ? " ·" : ""}
+                {icon}
+                {label}
               </span>
             ))}
           </div>
         </div>
 
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*,.pdf"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) handleFileUpload(file);
-          }}
-        />
-      </div>
-
-      {/* Demo button */}
-      <div className="text-center mt-5">
-        <button
-          onClick={async () => {
-            try {
-              // Fetch the sample image from assets and convert to blob
-              const response = await fetch(sampleImage);
-              const blob = await response.blob();
-              onUpload(blob);
-            } catch (error) {
-              console.error("Error loading sample image:", error);
-            }
-          }}
-          className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 font-bold text-[13px] px-5 py-2.5 rounded-2xl border-none cursor-pointer hover:bg-blue-100 transition-colors mb-4"
+        {/* ── Right: Upload zone ───────────────────────────────── */}
+        <div
+          className="animate-[fadeUp_0.5s_0.1s_cubic-bezier(0.22,1,0.36,1)_both] space-y-4"
         >
-          <FileIcon /> Try with sample prescription <ChevronIcon />
-        </button>
-        <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)]">
-          <img 
-            src={sampleImage} 
-            alt="Sample prescription" 
-            className="w-full max-w-sm mx-auto block"
-          />
+          {/* Drop zone */}
+          <Card
+            onClick={() => inputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={handleDrop}
+            className={[
+              "cursor-pointer border-2 border-dashed transition-all duration-200",
+              isDragging
+                ? "border-blue-400 bg-blue-50 shadow-lg shadow-blue-100"
+                : "border-slate-200 hover:border-blue-300 hover:bg-slate-50/50",
+            ].join(" ")}
+          >
+            <div className="flex flex-col items-center gap-5 py-14 px-8">
+              {/* Animated upload icon */}
+              <div className="relative flex items-center justify-center">
+                <div className="absolute inset-0 scale-[1.4] rounded-2xl bg-blue-400/20 animate-[pulse-ring_2.2s_ease-in-out_infinite]" />
+                <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 shadow-lg shadow-blue-600/30">
+                  <Upload className="h-7 w-7 text-white stroke-[2]" />
+                </div>
+              </div>
+
+              <div className="text-center">
+                <p className="text-base font-semibold text-slate-800">
+                  {isDragging ? "Drop it here" : "Drop prescription here"}
+                </p>
+                <p className="mt-1 text-sm text-slate-400">
+                  or{" "}
+                  <span className="text-blue-600 font-semibold">browse files</span>
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {["JPG", "PNG", "WEBP", "HEIC"].map((fmt, i) => (
+                  <span
+                    key={fmt}
+                    className={`text-[11px] font-semibold ${i % 2 === 0 ? "text-blue-500" : "text-slate-400"}`}
+                  >
+                    {fmt}{i < 3 ? " ·" : ""}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/*,.pdf"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFile(file);
+              }}
+            />
+          </Card>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3">
+            <div className="h-px flex-1 bg-slate-200" />
+            <span className="text-xs font-medium text-slate-400">or try a demo</span>
+            <div className="h-px flex-1 bg-slate-200" />
+          </div>
+
+          {/* Demo button + preview */}
+          <Button
+            onClick={handleDemo}
+            variant="outline"
+            size="lg"
+            className="w-full justify-between text-slate-700 border-slate-200"
+          >
+            <span className="flex items-center gap-2">
+              <FileImage className="h-4 w-4 text-blue-500" />
+              Try with sample prescription
+            </span>
+            <ChevronRight className="h-4 w-4 text-slate-400" />
+          </Button>
+
+          {/* Sample image preview */}
+          <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
+            <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-3 py-2">
+              <div className="flex gap-1">
+                <div className="h-2.5 w-2.5 rounded-full bg-red-300" />
+                <div className="h-2.5 w-2.5 rounded-full bg-amber-300" />
+                <div className="h-2.5 w-2.5 rounded-full bg-green-300" />
+              </div>
+              <span className="text-[11px] text-slate-400 font-medium">sample_prescription.jpeg</span>
+            </div>
+            <img
+              src={sampleImage}
+              alt="Sample prescription"
+              className="w-full block max-h-72 object-cover object-top"
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
