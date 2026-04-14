@@ -3,6 +3,7 @@ import {
   Activity,
   AlertTriangle,
   BadgeCheck,
+  BellPlus,
   Building2,
   Calendar,
   CalendarClock,
@@ -12,8 +13,10 @@ import {
   ClipboardCopy,
   Clock,
   Droplets,
+  ExternalLink,
   FlaskConical,
   Heart,
+  IndianRupee,
   Info,
   Layers,
   Phone,
@@ -22,6 +25,7 @@ import {
   Stethoscope,
   User,
 } from "lucide-react";
+import { buildGoogleCalendarUrl, downloadICS, generateICS } from "../lib/calendar";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -37,6 +41,7 @@ import { Separator } from "./ui/separator";
 interface AlternativeMedicine {
   name: string;
   type: string;
+  price_inr?: string | null;
 }
 
 interface Medication {
@@ -46,20 +51,23 @@ interface Medication {
   frequency: string;
   route: string;
   duration: string;
-  instructions?: string;
+  purpose?: string | null;
+  price_inr?: string | null;
+  instructions?: string | null;
   side_effects?: string[];
   contraindications?: string[];
   precautions?: string;
   alternatives?: AlternativeMedicine[];
 }
 
-interface PrescriptionData {
+export interface PrescriptionData {
   prescription_id: string;
   date_issued: string;
   chief_complaint?: string | null;
   diagnosis?: string[];
   clinical_notes?: string | null;
   follow_up_date?: string | null;
+  follow_up_time?: string | null;
   vitals_at_visit?: { BP?: string; FBS?: string; PPBS?: string } | null;
   patient: {
     name: string;
@@ -114,6 +122,8 @@ export const SAMPLE_DATA: PrescriptionData = {
       frequency: "Twice a day (morning and night)",
       route: "Oral",
       duration: "5 days",
+      purpose: "To fight the bacterial infection in your mouth and gums, and to prevent it from spreading after your dental procedure.",
+      price_inr: "₹240–280 / strip of 6 tablets",
       instructions: "Take after meals",
       side_effects: ["Nausea", "Vomiting", "Diarrhea", "Abdominal pain", "Skin rash", "Candidiasis"],
       contraindications: [
@@ -122,10 +132,10 @@ export const SAMPLE_DATA: PrescriptionData = {
       ],
       precautions: "Use with caution in patients with renal or hepatic impairment.",
       alternatives: [
-        { name: "Moxikind-CV 625mg", type: "alternative" },
-        { name: "Clavam 625mg", type: "alternative" },
-        { name: "Amoxyclav 625mg", type: "alternative" },
-        { name: "Amoxicillin + Clavulanic Acid 625mg", type: "generic" },
+        { name: "Moxikind-CV 625mg", type: "alternative", price_inr: "₹160–185 / strip of 6 tablets" },
+        { name: "Clavam 625mg", type: "alternative", price_inr: "₹195–225 / strip of 6 tablets" },
+        { name: "Amoxyclav 625mg", type: "alternative", price_inr: "₹170–200 / strip of 6 tablets" },
+        { name: "Amoxicillin + Clavulanic Acid 625mg", type: "generic", price_inr: "₹80–120 / strip of 6 tablets" },
       ],
     },
     {
@@ -135,6 +145,8 @@ export const SAMPLE_DATA: PrescriptionData = {
       frequency: "Twice a day (morning and night)",
       route: "Oral",
       duration: "5 days",
+      purpose: "To relieve pain, reduce swelling, and bring down inflammation in your gums and jaw after the dental procedure.",
+      price_inr: "₹120–150 / strip of 10 tablets",
       instructions: "Take after meals",
       side_effects: ["Nausea", "Stomach pain", "Indigestion", "Dizziness", "Drowsiness"],
       contraindications: [
@@ -145,9 +157,9 @@ export const SAMPLE_DATA: PrescriptionData = {
       ],
       precautions: "Avoid alcohol. Use with caution in cardiovascular disease or hypertension.",
       alternatives: [
-        { name: "Serata-D Tablet", type: "alternative" },
-        { name: "Enzoflam-D Tablet", type: "alternative" },
-        { name: "Diclofenac + Paracetamol + Serratiopeptidase", type: "generic" },
+        { name: "Serata-D Tablet", type: "alternative", price_inr: "₹90–115 / strip of 10 tablets" },
+        { name: "Enzoflam-D Tablet", type: "alternative", price_inr: "₹105–135 / strip of 10 tablets" },
+        { name: "Diclofenac + Paracetamol + Serratiopeptidase", type: "generic", price_inr: "₹40–65 / strip of 10 tablets" },
       ],
     },
     {
@@ -157,6 +169,8 @@ export const SAMPLE_DATA: PrescriptionData = {
       frequency: "Once a day (morning)",
       route: "Oral",
       duration: "5 days",
+      purpose: "To protect your stomach — it reduces acid and prevents the nausea or stomach upset that the other medicines (antibiotic and painkiller) can cause.",
+      price_inr: "₹130–160 / strip of 10 tablets",
       instructions: "Take before meals",
       side_effects: ["Headache", "Nausea", "Diarrhea", "Dizziness"],
       contraindications: [
@@ -165,9 +179,9 @@ export const SAMPLE_DATA: PrescriptionData = {
       ],
       precautions: "Long-term use may increase risk of osteoporosis.",
       alternatives: [
-        { name: "Pantocid-D", type: "alternative" },
-        { name: "Pentaloc-D", type: "alternative" },
-        { name: "Pantoprazole + Domperidone", type: "generic" },
+        { name: "Pantocid-D", type: "alternative", price_inr: "₹95–120 / strip of 10 tablets" },
+        { name: "Pentaloc-D", type: "alternative", price_inr: "₹105–130 / strip of 10 tablets" },
+        { name: "Pantoprazole + Domperidone", type: "generic", price_inr: "₹30–55 / strip of 10 tablets" },
       ],
     },
     {
@@ -177,14 +191,16 @@ export const SAMPLE_DATA: PrescriptionData = {
       frequency: "Twice a day (morning and night)",
       route: "Topical (oral)",
       duration: "1 week",
+      purpose: "To keep your gums clean, kill bacteria, and prevent gum infection at the site of your dental treatment.",
+      price_inr: "₹90–120 / 30g tube",
       instructions: "Massage onto gums. Do not swallow.",
       side_effects: ["Temporary staining of teeth", "Altered taste", "Burning sensation"],
       contraindications: ["Hypersensitivity to chlorhexidine"],
       precautions: "For oral use only. Do not swallow. Keep out of reach of children.",
       alternatives: [
-        { name: "Rexidin M Forte Gel", type: "alternative" },
-        { name: "Perio-Aid Gel", type: "alternative" },
-        { name: "Chlorhexidine Gluconate Gel", type: "generic" },
+        { name: "Rexidin M Forte Gel", type: "alternative", price_inr: "₹70–90 / 30g tube" },
+        { name: "Perio-Aid Gel", type: "alternative", price_inr: "₹60–80 / tube" },
+        { name: "Chlorhexidine Gluconate Gel", type: "generic", price_inr: "₹35–55 / tube" },
       ],
     },
   ],
@@ -203,6 +219,14 @@ const fmtDate = (iso: string) => {
     month: "long",
     year: "numeric",
   });
+};
+
+/** "HH:MM" → "9:30 AM" */
+const fmtTime = (t: string) => {
+  const [h, m] = t.split(":").map(Number);
+  const period = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 || 12;
+  return `${hour}:${String(m).padStart(2, "0")} ${period}`;
 };
 
 const freqBadge = (freq: string) => {
@@ -231,7 +255,8 @@ ${vitalsStr}MEDICATIONS:
 ${data.medications
   .map((m, i) => {
     let line = `${i + 1}. ${m.name}${m.strength ? ` ${m.strength}` : ""} — ${m.frequency} for ${m.duration}`;
-    if (m.instructions) line += `\n   ${m.instructions}`;
+    if (m.purpose) line += `\n   Purpose: ${m.purpose}`;
+    if (m.instructions) line += `\n   Instructions: ${m.instructions}`;
     if (m.alternatives?.length)
       line += `\n   Alternatives: ${m.alternatives.map((a) => a.name).join(", ")}`;
     return line;
@@ -259,9 +284,10 @@ const InfoRow = ({ icon, label, value }: { icon: React.ReactNode; label: string;
 interface DashboardProps {
   data: unknown;
   onReset: () => void;
+  demoMode?: boolean;
 }
 
-const Dashboard = ({ data: rawData, onReset }: DashboardProps) => {
+const Dashboard = ({ data: rawData, onReset, demoMode = false }: DashboardProps) => {
   const data = rawData as PrescriptionData;
   const [copied, setCopied] = useState(false);
   const [expandedMeds, setExpandedMeds] = useState<Set<number>>(new Set());
@@ -273,6 +299,7 @@ const Dashboard = ({ data: rawData, onReset }: DashboardProps) => {
     medications,
     clinical_notes,
     follow_up_date,
+    follow_up_time,
     chief_complaint,
     prescription_id,
     date_issued,
@@ -301,6 +328,19 @@ const Dashboard = ({ data: rawData, onReset }: DashboardProps) => {
 
   return (
     <div className="animate-[fadeIn_0.4s_ease_both]">
+      {/* ── Demo Mode Banner ─────────────────────────────────── */}
+      {demoMode && (
+        <div className="bg-amber-50 border-b border-amber-200">
+          <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center gap-2.5">
+            <FlaskConical className="w-4 h-4 text-amber-600 shrink-0" />
+            <p className="text-sm text-amber-800">
+              <span className="font-semibold">Demo Mode</span>
+              {" — "}Sample prescription data is displayed because the AI service is temporarily unavailable (quota limit). All features and UI are fully functional.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* ── Prescription Header Banner ───────────────────────── */}
       <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 text-white">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
@@ -484,8 +524,9 @@ const Dashboard = ({ data: rawData, onReset }: DashboardProps) => {
 
             {/* Follow-up Card */}
             {followDate && (
-              <Card>
-                <CardContent className="p-4">
+              <Card className="border-indigo-100">
+                <CardContent className="p-4 space-y-3">
+                  {/* Date widget row */}
                   <div className="flex items-center gap-4">
                     <div className="shrink-0 overflow-hidden rounded-xl border border-indigo-100 w-14 text-center">
                       <div className="bg-indigo-600 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white">
@@ -502,11 +543,61 @@ const Dashboard = ({ data: rawData, onReset }: DashboardProps) => {
                       <p className="text-xs text-slate-500 mt-0.5">
                         {followDate.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
                       </p>
-                      <p className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-indigo-600">
+                      {follow_up_time && (
+                        <p className="mt-0.5 flex items-center gap-1 text-xs font-semibold text-indigo-700">
+                          <Clock className="w-3 h-3" />
+                          {fmtTime(follow_up_time)}
+                        </p>
+                      )}
+                      <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-indigo-500">
                         <CalendarClock className="w-3.5 h-3.5" />
                         Scheduled Review
                       </p>
                     </div>
+                  </div>
+
+                  {/* Calendar action buttons */}
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      onClick={() => {
+                        const content = generateICS({
+                          title: `Follow-up: ${patient.name}`,
+                          date: follow_up_date!,
+                          time: follow_up_time,
+                          description: [
+                            `Follow-up with ${doctor.name}`,
+                            doctor.specialization && `Specialty: ${doctor.specialization}`,
+                            doctor.clinic_name && `Clinic: ${doctor.clinic_name}`,
+                            doctor.contact_number && `Contact: ${doctor.contact_number}`,
+                            "Generated by RxLens",
+                          ].filter(Boolean).join("\n"),
+                          location: doctor.clinic_address ?? doctor.clinic_name ?? undefined,
+                        });
+                        downloadICS("rxlens-followup.ics", content);
+                      }}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 px-3 py-2 text-xs font-semibold text-white transition-colors"
+                    >
+                      <BellPlus className="w-3.5 h-3.5" />
+                      Set Reminder
+                    </button>
+                    <a
+                      href={buildGoogleCalendarUrl({
+                        title: `Follow-up: ${patient.name}`,
+                        date: follow_up_date!,
+                        time: follow_up_time,
+                        description: [
+                          `Follow-up with ${doctor.name}`,
+                          doctor.clinic_name && `Clinic: ${doctor.clinic_name}`,
+                        ].filter(Boolean).join("\n"),
+                        location: doctor.clinic_name ?? undefined,
+                      })}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 px-3 py-2 text-xs font-semibold text-indigo-700 transition-colors"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      Google Cal
+                    </a>
                   </div>
                 </CardContent>
               </Card>
@@ -568,11 +659,37 @@ const Dashboard = ({ data: rawData, onReset }: DashboardProps) => {
                           )}
                         </div>
                         <p className="mt-1 text-sm text-slate-500">{med.dosage}</p>
+
+                        {/* Purpose — why the patient is taking this */}
+                        {med.purpose && (
+                          <div className="mt-3 flex items-start gap-2.5 rounded-lg bg-violet-50 border border-violet-100 px-3 py-2.5">
+                            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-200">
+                              <span className="text-[10px] font-black text-violet-700">?</span>
+                            </span>
+                            <div>
+                              <p className="text-[10px] font-semibold uppercase tracking-wide text-violet-500 mb-0.5">
+                                Why you're taking this
+                              </p>
+                              <p className="text-sm text-violet-900 leading-snug">
+                                {med.purpose}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
                         {med.instructions && (
-                          <p className="mt-1.5 flex items-start gap-1.5 text-sm text-slate-600">
+                          <p className="mt-2 flex items-start gap-1.5 text-sm text-slate-600">
                             <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-blue-500" />
                             {med.instructions}
                           </p>
+                        )}
+
+                        {med.price_inr && (
+                          <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-green-50 border border-green-200 px-3 py-1.5 text-sm">
+                            <IndianRupee className="w-3.5 h-3.5 text-green-600 shrink-0" />
+                            <span className="font-semibold text-green-800">{med.price_inr}</span>
+                            <span className="text-xs text-green-600">(approx.)</span>
+                          </div>
                         )}
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0 text-xs font-medium text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5">
@@ -681,13 +798,17 @@ const Dashboard = ({ data: rawData, onReset }: DashboardProps) => {
                     {hasAlts && altsOpen && (
                       <div className="mt-4 animate-[slideDown_0.25s_ease]">
                         <Separator className="mb-4" />
-                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 mb-2.5">
-                          Alternative Medicines
-                        </p>
+                        <div className="flex items-center justify-between mb-2.5">
+                          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                            Alternative Medicines
+                          </p>
+                          <p className="text-[10px] text-slate-400 italic">prices approx. — Indian pharmacy</p>
+                        </div>
                         <div className="flex flex-col gap-2">
                           {med.alternatives!.map((alt, altIdx) => {
                             const name = typeof alt === "string" ? alt : alt.name;
                             const type = typeof alt === "string" ? "alternative" : alt.type;
+                            const price = typeof alt === "string" ? null : alt.price_inr;
                             const isGeneric = type === "generic";
                             return (
                               <div
@@ -700,7 +821,12 @@ const Dashboard = ({ data: rawData, onReset }: DashboardProps) => {
                                 ].join(" ")}
                               >
                                 <FlaskConical className={`w-3.5 h-3.5 shrink-0 ${isGeneric ? "text-blue-500" : "text-purple-500"}`} />
-                                <span className="flex-1">{name}</span>
+                                <span className="flex-1 min-w-0">{name}</span>
+                                {price && (
+                                  <span className={`text-xs font-semibold shrink-0 ${isGeneric ? "text-blue-600" : "text-purple-600"}`}>
+                                    {price}
+                                  </span>
+                                )}
                                 {isGeneric && (
                                   <Badge variant="info" size="sm">Generic</Badge>
                                 )}
